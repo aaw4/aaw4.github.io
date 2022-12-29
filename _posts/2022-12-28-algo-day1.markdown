@@ -5,12 +5,136 @@ date:   2022-12-28 11:07:44 -0000
 categories: Algorithm
 ---
 
-* Problems:
+### Problem 1:
+
+[704. Binary Search](https://leetcode.com/problems/binary-search/description/)
 
 * First Thought:
 
+  1. sorted ascending, unique. We would use binary search to solve this problem.
+  2. left < right may result in last element not checked.
+
+&nbsp;
+
 * Thoughts After Looking At The Solution:
+
+  1. Key code:
+  {% highlight python %}
+  class Solution(object):
+      def search(self, nums, target):
+          """
+          :type nums: List[int]
+          :type target: int
+          :rtype: int
+          """
+          # i and j are first and last index of the array
+          i = 0
+          j = len(nums) - 1
+          while i < j:
+              midIndex = i + (j - i) // 2
+              if nums[midIndex] < target:
+                  i = midIndex + 1
+              elif nums[midIndex] > target:
+                  j = midIndex - 1
+              else:
+                  return midIndex
+          return i if nums[i] == target else -1
+  {% endhighlight %}
+
+&nbsp;
 
 * Difficulties Encountered:
 
+  1. left < right, or left <= right?
+
+&nbsp;
+
+* Conclusion
+  1. if right = len(nums) - 1, we use left <= right; if right = len(nums), we use left < right
+  2. Have one fixed way of implementing such
+
+&nbsp;
+
+### Problem 2:
+
+[27. Remove Element](https://leetcode.com/problems/remove-element/description/)
+
+* First Thought:
+
+  1. vals could be not in the array
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. brute force solutions needs to consider consecutive duplicate elements senario. Second loop which is responsible for updating the array should move index 1 back each loop.
+  2. brute force code:
+  {% highlight python %}
+  class Solution(object):
+      def removeElement(self, nums, val):
+          """
+          :type nums: List[int]
+          :type val: int
+          :rtype: int
+          """
+          # brute force
+          res = len(nums)
+          i = 0
+          while i < res:
+              if nums[i] == val:
+                  runner = i
+                  while runner + 1 < res:
+                      nums[runner] = nums[runner + 1]
+                      runner += 1
+                  # important step, move i back
+                  res -= 1
+                  i -= 1
+              i += 1
+
+          return res
+  {% endhighlight %}
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. python for loop doesn't work like C++. We can't move index back or forward, but instead for loop will execute its default increment after each loop no matter how we change the iterator. We should use while loop instead if we want to control steps.
+  2. while loop size should be updated each loop
+
+&nbsp;
+
 * Conclusion:
+
+  1. use two pointers to do jobs that's used to be done in two loops in only one loop.
+  2. two pointer solution
+  {% highlight python %}
+  class Solution(object):
+      def removeElement(self, nums, val):
+          """
+          :type nums: List[int]
+          :type val: int
+          :rtype: int
+          """
+          left = 0
+          right = len(nums) - 1
+          res = len(nums)
+          while left <= right:
+              if nums[left] == val:
+                  res -= 1
+                  while right > left and nums[right] == val:
+                      res -= 1
+                      right -= 1
+                  if right > left:
+                      nums[left] = nums[right]
+                      right -= 1
+              left += 1
+          return res
+  {% endhighlight %}
+
+&nbsp;
+
+
+### Tips:
+if data size is 10^5 or more, then most likely algorithms with O(nlogn) and below are feasible.
+But if data size is 100 or 1000, O(n^2) is acceptable.
+Binary Search has a time complexity of O(logn)
