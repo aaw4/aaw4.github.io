@@ -135,6 +135,6 @@ categories: Algorithm
 
 
 ### Tips:
-if data size is 10^5 or more, then most likely algorithms with O(nlogn) and below are feasible.
-But if data size is 100 or 1000, O(n^2) is acceptable.
+if data size is 10^5 or more, then most likely algorithms with O(nlogn) and below are feasible. \
+But if data size is 100 or 1000, O(n^2) is acceptable. \
 Binary Search has a time complexity of O(logn)
