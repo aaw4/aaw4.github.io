@@ -1,0 +1,116 @@
+---
+layout: post
+title:  "Algo Day 3"
+date:   2022-12-30 23:00:00 -0000
+categories: Algorithm
+---
+
+### Problem 1:
+
+[203. Remove Linked List Elements](https://leetcode.com/problems/remove-linked-list-elements/)
+
+* First Thought:
+
+  1. when we see problem dealing with every node including the head node in a linkedlist, we think of using dummy node
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion
+  1. Check if None.
+
+&nbsp;
+
+### Problem 2:
+
+[707. Design Linked List](https://leetcode.com/problems/design-linked-list/description/)
+
+* First Thought:
+
+  1. Define a ListNode class
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Dummy node is important
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. count index
+
+&nbsp;
+
+* Conclusion:
+
+  1. dummy head important!
+
+&nbsp;
+
+### Problem 3:
+
+[206. Reverse Linked List](https://leetcode.com/problems/reverse-linked-list/)
+
+* First Thought:
+
+  1. Need two pointers
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We can implement it recursively
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+  1. We can implement it recursively
+  > TODO: implement it recursively
+  2. recursive solution code:
+  {% highlight python %}
+    # Definition for singly-linked list.
+    # class ListNode:
+    #     def __init__(self, val=0, next=None):
+    #         self.val = val
+    #         self.next = next
+    class Solution:
+        def reverseList(self, head: ListNode) -> ListNode:
+            
+            def reverse(pre,cur):
+                if not cur:
+                    return pre
+                    
+                tmp = cur.next
+                cur.next = pre
+
+                return reverse(cur,tmp)
+            
+            return reverse(None,head)
+  {% endhighlight %}
+
+&nbsp;
+
+
+### Tips:
+recursively unchanged variable. \
+clean code has clear principles.
