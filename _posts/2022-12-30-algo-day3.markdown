@@ -2,8 +2,26 @@
 layout: post
 title:  "Algo Day 3"
 date:   2022-12-30 23:00:00 -0000
-categories: Algorithm
+categories: [Algorithm,Linkedlist]
 ---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+&nbsp;
 
 ### Problem 1:
 

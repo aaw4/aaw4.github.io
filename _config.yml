@@ -27,6 +27,8 @@ url: "https://aaw4.github.io/" # the base hostname & protocol for your site, e.g
 # twitter_username: jekyllrb
 github_username:  aaw4
 
+permalink: /:categories/:title/
+
 # Build settings
 theme: minima
 plugins:

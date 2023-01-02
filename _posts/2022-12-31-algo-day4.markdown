@@ -1,0 +1,188 @@
+---
+layout: post
+title:  "Algo Day 4"
+date:   2022-12-31 23:00:00 -0000
+categories: [Algorithm,Linkedlist]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+&nbsp;
+
+### Problem 1:
+
+[24. Swap Nodes in Pairs](https://leetcode.com/problems/swap-nodes-in-pairs/)
+
+* First Thought:
+
+  1. when we see problem dealing with every node including the head node in a linkedlist, we think of using dummy node
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion
+  1. NA
+
+&nbsp;
+
+### Problem 2:
+
+[19. Remove Nth Node From End of List](https://leetcode.com/problems/remove-nth-node-from-end-of-list/)
+
+* First Thought:
+
+  1. We need a dummy.
+  2. we need to count size.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. we can do it in one pass
+  2. fast slow pointer
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. count index
+
+&nbsp;
+
+* Conclusion:
+
+  1. think of two pointers in linkedlist problems.
+
+&nbsp;
+
+### Problem 3:
+
+[160. Intersection of Two Linked Lists](https://leetcode.com/problems/intersection-of-two-linked-lists/)
+
+* First Thought:
+
+  1. Need two pointers
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We need to calculate the size of the two linkedlist to use two pointers!
+  2. calculate size difference. Move longer linkedlist's runner to a point where the rest of the longer linkedlist has the same length of the shorter linkedlist.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. same value doesn't mean same pointer. Dummy node stil important here.
+
+&nbsp;
+
+* Conclusion:
+
+  1. Make linkedlist same length and the loop steps are easier to design.
+
+&nbsp;
+
+### Problem 4:
+
+[142. Linked List Cycle II](https://leetcode.com/problems/linked-list-cycle-ii/)
+
+* First Thought:
+
+  1. Need to use fast slow pointers
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. we can solve the problem in one loop (but still O(n^2), just easier to deal with corner cases. We start finding the cycle start point whenever the fast slow pointer meets for the first time.)
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. corner cases very intersting.
+  2. corner case 1: cycle at head case
+  3. corner case 2: fast.next is used to see if linkedlist has a size greater than 1
+
+&nbsp;
+
+* Conclusion:
+
+    1. code:
+        {% highlight python %}
+        class Solution(object):
+        def detectCycle(self, head):
+            """
+            :type head: ListNode
+            :rtype: ListNode
+            """
+            slow = head
+            fast = head
+            # fast.next is used to see if linkedlist has a size greater than 1
+            while slow and fast and fast.next:
+                slow = slow.next
+                fast = fast.next.next
+                if fast == slow:
+                    break
+            slow = head
+            # deal with cycle at head case
+            if slow == fast and fast and fast.next:
+                return slow
+            while slow and fast and fast.next:
+                slow = slow.next
+                fast = fast.next
+                if slow == fast:
+                    return slow
+            return None
+        {% endhighlight %}
+
+* simpler code:
+>TODO: implement this
+
+        {% highlight python %}
+        class Solution:
+        def detectCycle(self, head: ListNode) -> ListNode:
+            slow, fast = head, head
+            while fast and fast.next:
+                slow = slow.next
+                fast = fast.next.next
+                # if meets
+                if slow == fast:
+                    p = head
+                    q = slow
+                    while p!=q:
+                        p = p.next
+                        q = q.next
+                    return p
+
+            return None
+        {% endhighlight %}
+
+&nbsp;
