@@ -1,0 +1,157 @@
+---
+layout: post
+title:  "Algo Day 6"
+date:   2023-01-02 15:00:00 -0000
+categories: [Algorithm,Hash Table]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+&nbsp;
+
+>Hash Table
+* array is a hashtable
+* When we encounter the need to quickly determine whether an element appears in the set, we can consider the hash method
+
+
+### Problem 1:
+
+[242. Valid Anagram](https://leetcode.com/problems/valid-anagram/)
+
+* First Thought:
+
+  1. use hash map to store appearance of letters in s. in t we loop through and check.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. array is a hash map. use array could solve the problem
+  2. ASCII: a -> 0, z -> 25
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. use ord() function to get the unicode of a given character
+
+&nbsp;
+
+* Conclusion
+  1. array is a type of hashmap and if we only need limited amount of keys we can use array as hashmap.
+
+&nbsp;
+
+### Problem 2:
+
+[349. Intersection of Two Arrays](https://leetcode.com/problems/intersection-of-two-arrays/description/)
+
+* First Thought:
+
+  1. Use two hashset. One for one of the array and the other for result
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. why not using array? Direct use of set not only takes up more space than arrays, but also is slower than arrays. Sets need to do hash calculations to map values to keys. Don't underestimate the performance difference. In the case of a large amount of data, the difference is obvious.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+  1. If the hash value is small, especially scattered, and the span is very large, using an array will cause a waste of space!
+  2. >TODO: implement it using dictionary in Python
+
+&nbsp;
+
+### Problem 3:
+
+[202. Happy Number](https://leetcode.com/problems/happy-number/)
+
+* First Thought:
+
+  1. Use hash set.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+  1. Need to write down steps to find the pattern and see what data structure we need to use.
+
+&nbsp;
+
+### Problem 4:
+
+[1. Two Sum](https://leetcode.com/problems/two-sum/)
+
+* First Thought:
+
+  1. Here we go again. Problem 1!
+  2. using map as we need to store index as value
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Need to know when to use hash table and which type (array, set, map) to use
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+    1. NA
+
+&nbsp;
+
+### Tips:
+
+| Collection | Underlying Implmentation | If Ordered | can be repeated? | can change value? | search time complexity | add or remove complexity
+|-------|--------|---------|
+| set | red black tree | ordered | no | no | O(logn) | O(logn)
+| multiset| red black tree | ordered | yes | no | O(logn) | O(logn)
+| unordered_set | hash table | not ordered | no | no | O(1) | O(1)
+
+| Collection | Underlying Implmentation | If Ordered | can be repeated? | can change value? | search time complexity | add or remove complexity
+|-------|--------|---------|
+| map | red black tree | key ordered | key no | key no | O(logn) | O(logn)
+| multimap| red black tree | key ordered | key yes | key no | O(logn) | O(logn)
+| unordered_map | hash table | key not ordered | key no | key no | O(1) | O(1)

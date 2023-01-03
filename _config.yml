@@ -29,6 +29,8 @@ github_username:  aaw4
 
 permalink: /:categories/:title/
 
+markdown: kramdown
+
 # Build settings
 theme: minima
 plugins:

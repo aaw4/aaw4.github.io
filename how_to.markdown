@@ -27,3 +27,69 @@ permalink: /how_to/
     zeros = [ [0] * N for _ in range(M)]  \
     for M x N array of zeros  \
     [https://stackoverflow.com/questions/13157961/2d-array-of-zeros](https://stackoverflow.com/questions/13157961/2d-array-of-zeros)
+
+
+* python dictionary
+    # Creating a Dictionary \
+    # with dict() method \
+    Dict = dict({1: 'Geeks', 2: 'For', 3: 'Geeks'}) \
+    print("\nDictionary with the use of dict(): ") \
+    print(Dict)
+    
+    # Creating a Dictionary \
+    # with each item as a Pair \
+    Dict = dict([(1, 'Geeks'), (2, 'For')])
+
+    # Adding set of values \
+    # to a single Key \
+    Dict['Value_set'] = 2, 3, 4
+
+    # Creating an empty Dictionary \
+    Dict = {} \
+    print("Empty Dictionary: ") \
+    print(Dict)
+    
+    # Adding elements one at a time \
+    Dict[0] = 'Geeks' \
+    Dict[2] = 'For' \
+    Dict[3] = 1 \
+    print("\nDictionary after adding 3 elements: ") \
+    print(Dict)
+    
+    # Adding set of values \
+    # to a single Key \
+    Dict['Value_set'] = 2, 3, 4 \
+    print("\nDictionary after adding 3 elements: ") \
+    print(Dict)
+    
+    # Updating existing Key's Value \
+    Dict[2] = 'Welcome' \
+    print("\nUpdated key value: ") \
+    print(Dict)
+    
+    # Adding Nested Key value to Dictionary \
+    Dict[5] = {'Nested': {'1': 'Life', '2': 'Geeks'}} \
+    print("\nAdding a Nested Key: ") \
+    print(Dict)
+
+    Dictionary methods \
+    clear() – Remove all the elements from the dictionary \
+    copy() – Returns a copy of the dictionary \
+    get() – Returns the value of specified key \
+    items() – Returns a list containing a tuple for each key value pair \
+    keys() – Returns a list containing dictionary’s keys \
+    pop() – Remove the element with specified key \
+    popitem() – Removes the last inserted key-value pair \
+    update() – Updates dictionary with specified key-value pairs \
+    values() – Returns a list of all the values of dictionary \
+    [https://www.geeksforgeeks.org/python-dictionary/](https://www.geeksforgeeks.org/python-dictionary/)
+
+* python unicode
+    Python ord() function returns the Unicode code from a given character
+
+* python hash set
+    set() \
+    add(), discard(), update(), union()
+    [https://www.programiz.com/python-programming/set](https://www.programiz.com/python-programming/set)
+
+
