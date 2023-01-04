@@ -92,4 +92,24 @@ permalink: /how_to/
     add(), discard(), update(), union()
     [https://www.programiz.com/python-programming/set](https://www.programiz.com/python-programming/set)
 
+* python sort list
+    # function to return the second element of thec
+    # two elements passed as the parameter \
+    def sortSecond(val): \
+        return val[1]
+    
+    # list1 to demonstrate the use of sorting \
+    # using  second key \
+    list1 = [(1, 2), (3, 3), (1, 1)] \
+    
+    # sorts the array in ascending according to \
+    # second element \
+    list1.sort(key=sortSecond) \
+    print(list1)
+    
+    # sorts the array in descending according to \
+    # second element \
+    list1.sort(key=sortSecond, reverse=True) \
+    print(list1)
 
+    [https://www.geeksforgeeks.org/python-list-sort-method/](https://www.geeksforgeeks.org/python-list-sort-method/)

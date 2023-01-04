@@ -1,0 +1,219 @@
+---
+layout: post
+title:  "Algo Day 7"
+date:   2023-01-03 16:20:00 -0000
+categories: [Algorithm,Hash Table]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+&nbsp;
+
+
+### Problem 1:
+
+[454. 4Sum II](https://leetcode.com/problems/4sum-ii/)
+
+* First Thought:
+
+  1. brute force requires O(n^4)
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. add a + b in a map to check if c + d is in the map. This reduces time complexity to O(n^2)
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Can think of a + b + c compares with d, but should think further to a + b compares with c + d
+
+&nbsp;
+
+* Conclusion
+  1. defaultdict solution:
+  {% highlight python %}
+  class Solution:
+    def fourSumCount(self, nums1: list, nums2: list, nums3: list, nums4: list) -> int:
+        from collections import defaultdict # You may use normal dict instead.
+        rec, cnt = defaultdict(lambda : 0), 0
+        # To store the summary of all the possible combinations of nums1 & nums2, together with their frequencies.
+        for i in nums1:
+            for j in nums2:
+                rec[i+j] += 1
+        # To add up the frequencies if the corresponding value occurs in the dictionary
+        for i in nums3:
+            for j in nums4:
+                cnt += rec.get(-(i+j), 0) # No matched key, return 0.
+        return cnt
+  {% endhighlight %}
+
+&nbsp;
+
+### Problem 2:
+
+[383. Ransom Note](https://leetcode.com/problems/ransom-note/)
+
+* First Thought:
+
+  1. all lowercase english letters. can use array for hashing.
+  2. ransomNote has to make use of every letter in magazine. Magazine can be abundant, but can't be short of letters.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+  1. NA
+
+&nbsp;
+
+### Problem 3:
+
+[15. 3Sum](https://leetcode.com/problems/3sum/)
+
+* First Thought:
+
+  1. Use set as result and dict as check.
+  2. O(n^2)
+  3. sort length 3 tuple and check if in result set.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Two pointer is faster.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. How to make sure no duplicate in the result.
+
+&nbsp;
+
+* Conclusion:
+
+  1. >TODO: Two Pointer Solution
+  {% highlight python %}
+  class Solution:
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        if len(nums) < 3: return []
+        nums, res = sorted(nums), []
+        for i in range(len(nums) - 2):
+            cur, l, r = nums[i], i + 1, len(nums) - 1
+            if res != [] and res[-1][0] == cur: continue # Drop duplicates for the first time.
+
+            while l < r:
+                if cur + nums[l] + nums[r] == 0:
+                    res.append([cur, nums[l], nums[r]])
+                    # Drop duplicates for the second time in interation of l & r. Only used when target situation occurs, because that is the reason for dropping duplicates.
+                    while l < r - 1 and nums[l] == nums[l + 1]:
+                        l += 1
+                    while r > l + 1 and nums[r] == nums[r - 1]:
+                        r -= 1
+                if cur + nums[l] + nums[r] > 0:
+                    r -= 1
+                else:
+                    l += 1
+        return res
+  {% endhighlight %}
+
+&nbsp;
+
+### Problem 4:
+
+[1. Two Sum](https://leetcode.com/problems/two-sum/)
+
+* First Thought:
+
+  1. Two pointer solution.
+  2. O(n^3)
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We need to write code to deal with duplicates for all four numbers a, b, c, and d.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Duplicate is very hard to deal with if we don't use hash set, but that requires extra space.
+
+&nbsp;
+
+* Conclusion:
+
+    1. think of dealing with duplicates for each number instead of the whole thing. This would make the thought process a lot easier.
+    2. solution code
+    {% highlight python %}
+    class Solution(object):
+    def fourSum(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[List[int]]
+        """
+        if len(nums) < 4:
+            return []
+        nums = sorted(nums)
+        res = []
+        for i in range(len(nums)):
+            # a duplicate
+            if i - 1 >= 0 and nums[i - 1] == nums[i]:
+                continue
+            for j in range(i+1, len(nums)):
+                # b duplicate
+                if j != i + 1 and nums[j] == nums[j - 1]:
+                    continue
+                curTarget = target - (nums[i] + nums[j])
+                m = j + 1
+                n = len(nums) - 1
+                while m < n:
+                    if nums[m] + nums[n] > curTarget:
+                        n -= 1
+                    elif nums[m] + nums[n] < curTarget:
+                        m += 1
+                    else:
+                        res.append([nums[i], nums[j], nums[m], nums[n]])
+                        # c duplicate
+                        while m + 1 < n and nums[m + 1] == nums[m]:
+                            m += 1
+                        # d duplicate
+                        while n - 1 > m and nums[n - 1] == nums[n]:
+                            n -= 1
+                        n -= 1
+                        m += 1
+        return res
+    {% endhighlight %}
+
+&nbsp;
