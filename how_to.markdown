@@ -113,3 +113,26 @@ permalink: /how_to/
     print(list1)
 
     [https://www.geeksforgeeks.org/python-list-sort-method/](https://www.geeksforgeeks.org/python-list-sort-method/)
+
+* python string manipulation cheatsheet:
+    and all other python cheat sheet included: \
+    [https://www.pythoncheatsheet.org/cheatsheet/manipulating-strings](https://www.pythoncheatsheet.org/cheatsheet/manipulating-strings)
+
+* python string to list
+    [https://www.geeksforgeeks.org/python-program-convert-string-list/](https://www.geeksforgeeks.org/python-program-convert-string-list/)
+
+* python list to string
+    xs = ['1', '2', '3'] \
+    s = ''.join(xs) \
+    If the list contains integers, convert the elements to string before joining them:
+
+    xs = [1, 2, 3] \
+    s = ''.join(str(x) for x in xs)
+    [https://stackoverflow.com/questions/5618878/how-to-convert-list-to-string](https://stackoverflow.com/questions/5618878/how-to-convert-list-to-string)
+
+* python count specific character in a string
+    counter = s.count(' ')
+
+* python extend a list
+    res.extend([' '] * counter * 2)
+
