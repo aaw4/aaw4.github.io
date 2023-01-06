@@ -1,0 +1,164 @@
+---
+layout: post
+title:  "Algo Day 9"
+date:   2023-01-05 18:41:00 -0000
+categories: [Algorithm,KMP]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+&nbsp;
+
+### Problem 1:
+
+[28. Find the Index of the First Occurrence in a String](https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/)
+
+* First Thought:
+
+  1. search algorithm
+  2. brute force O(m * n)
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. KMP is fun.
+  2. we need to have the prefix and suffix table of the target string and then get the longest same prefix and suffix length for all substrings in that string.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. How to calculate the next array
+  2. How to use next array to find match of needle in haystack
+
+&nbsp;
+
+* Conclusion
+  1. j marks the last index of prefix
+  2. i marks the last index of suffix
+  3. step 1: initialize, step 2: prefix and postfix different: j = next[j - 1], step 3: prefix and postfix same, step 4: update next array: next[i] = j
+  4. KMP solution (not all minus 1 or all shift right 1 version):
+  {% highlight python %}
+  class Solution(object):
+    def getNext(self, needle):
+        next = [0] * len(needle)
+        # j is prefix
+        j = 0
+        next[0] = j
+        # i is postfix
+        for i in range(1, len(needle)):
+            while j - 1 >= 0 and needle[i] != needle[j]:
+                j = next[j - 1]
+            if needle[i] == needle[j]:
+                j += 1 # prefix length
+            next[i] = j
+        return next
+
+    def strStr(self, haystack, needle):
+        """
+        :type haystack: str
+        :type needle: str
+        :rtype: int
+        """
+        if len(needle) > len(haystack):
+            return -1
+        next = self.getNext(needle)
+        i = 0
+        j = 0
+        while i < len(haystack):
+            while j > 0 and needle[j] != haystack[i]:
+                j = next[j - 1]
+            if needle[j] == haystack[i]:
+                j += 1
+            if j == len(needle):
+                return i - j + 1
+            i += 1
+        return -1
+  {% endhighlight %}
+
+&nbsp;
+
+### Problem 2:
+
+[459. Repeated Substring Pattern](https://leetcode.com/problems/repeated-substring-pattern/)
+
+* First Thought:
+
+  1. Hard to think of KMP solution.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Can also use this method: for s + s, we can see if it contains at least an s. Of course we need to erase first and last character to avoid finding the original s.
+  2. solution:
+  {% highlight Python %}
+    t = (s + s)[1:-1]
+    if (t.find(s) != -1):
+        return True
+    else:
+        return False
+  {% endhighlight %}
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Again, hard to think of KMP solution.
+
+&nbsp;
+
+* Conclusion:
+
+  1. next would look like this: [0,0,1,2,3,4,5,6].
+  2. It is because of the rule of the longest same prefix and suffix, when a string is composed of repeated substrings, the substring not included in the longest same prefix and suffix is the smallest repeated substring.
+  3. KMP solution:
+    {% highlight python %}
+    class Solution(object):
+    def getNext(self, s):
+        next = [0] * len(s)
+        j = 0
+        next[0] = 0
+        for i in range(1, len(next)):
+            while j - 1 >= 0 and s[i] != s[j]:
+                j = next[j - 1]
+            if s[i] == s[j]:
+                j += 1
+            next[i] = j
+        return next
+
+    def repeatedSubstringPattern(self, s):
+        """
+        :type s: str
+        :rtype: bool
+        """
+        length = len(s)
+        next = self.getNext(s)
+        minRep = length - next[-1]
+        if next[-1] != 0 and length % minRep == 0:
+            return True
+        return False
+    {% endhighlight %}
+
+&nbsp;
+
+### Tips:
+
+* In fact, for many string filling problems, you can expand the array in advance with the updateds size, and then operate from the back to the front.
+* Perfect video for explaining KMP: [https://www.bilibili.com/video/BV1M5411j7Xx/](https://www.bilibili.com/video/BV1M5411j7Xx/)
+* Perfect KMP substitute (string hashing): [https://blog.csdn.net/m0_60413302/article/details/124638481?spm=1001.2014.3001.5502](https://blog.csdn.net/m0_60413302/article/details/124638481?spm=1001.2014.3001.5502)
