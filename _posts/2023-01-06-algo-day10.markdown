@@ -1,0 +1,201 @@
+---
+layout: post
+title:  "Algo Day 10"
+date:   2023-01-06 18:04:00 -0000
+categories: [Algorithm,Stack and Queue]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+&nbsp;
+
+### Problem 1:
+
+[232. Implement Queue using Stacks](https://leetcode.com/problems/implement-queue-using-stacks/)
+
+* First Thought:
+
+  1. One stack for in, one stack for out.
+  2. when poping, we need to move all elements from stackIn to stackOut then move all back to stackIn.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We dont have to move elements from stackOut back to stackIn after poping, because the newly pushed elements always should exit later than those already in the stackOut stack as we are implementing a queue data structure.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Hard to think of not moving back from stackOut to stackIn.
+
+&nbsp;
+
+* Conclusion
+  1. We shouldn't just copy code from pop to peek. Instead, we should use the pop method we just implemented. It's a good design.
+  2. Solution:
+  {% highlight python %}
+  class MyQueue(object):
+
+    def __init__(self):
+        self.stackIn = list()
+        self.stackOut = list()
+
+    def push(self, x):
+        """
+        :type x: int
+        :rtype: None
+        """
+        self.stackIn.append(x)
+        
+
+    def pop(self):
+        """
+        :rtype: int
+        """
+        if len(self.stackOut) == 0:
+            while len(self.stackIn) != 0:
+                self.stackOut.append(self.stackIn.pop())
+        return self.stackOut.pop()
+    
+
+    def peek(self):
+        """
+        :rtype: int
+        """
+        peekVal = self.pop()
+        self.stackOut.append(peekVal)
+        return peekVal
+
+    def empty(self):
+        """
+        :rtype: bool
+        """
+        if len(self.stackIn) == 0 and len(self.stackOut) == 0:
+            return True
+        return False
+
+
+    # Your MyQueue object will be instantiated and called as such:
+    # obj = MyQueue()
+    # obj.push(x)
+    # param_2 = obj.pop()
+    # param_3 = obj.peek()
+    # param_4 = obj.empty()
+  {% endhighlight %}
+
+&nbsp;
+
+### Problem 2:
+
+[225. Implement Stack using Queues](https://leetcode.com/problems/implement-stack-using-queues/)
+
+* First Thought:
+
+  1. Similar to (implement queue with two stacks)
+  2. It's easy to implement using only one queue.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. better put the logic originally written in push in pop
+  2. better use deque. As list's pop(0) has a time complexity of O(n).
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+  1. original solution:
+  {% highlight python %}
+    class MyStack(object):
+
+    def __init__(self):
+        self.queue = list()
+
+    def push(self, x):
+        """
+        :type x: int
+        :rtype: None
+        """
+        count = len(self.queue)
+        self.queue.append(x)
+        while count > 0:
+            self.queue.append(self.queue.pop(0))
+            count -= 1
+
+    def pop(self):
+        """
+        :rtype: int
+        """
+        return self.queue.pop(0)
+
+    def top(self):
+        """
+        :rtype: int
+        """
+        return self.queue[0]
+        
+
+    def empty(self):
+        """
+        :rtype: bool
+        """
+        return not len(self.queue)
+
+
+    # Your MyStack object will be instantiated and called as such:
+    # obj = MyStack()
+    # obj.push(x)
+    # param_2 = obj.pop()
+    # param_3 = obj.top()
+    # param_4 = obj.empty()
+  {% endhighlight %}
+  * better solution:
+    {% highlight python %}
+    class MyStack:
+
+    def __init__(self):
+        self.que = deque()
+
+    def push(self, x: int) -> None:
+        self.que.append(x)
+
+    def pop(self) -> int:
+        if self.empty():
+            return None
+        for i in range(len(self.que)-1):
+            self.que.append(self.que.popleft())
+        return self.que.popleft()
+
+    def top(self) -> int:
+        if self.empty():
+            return None
+        return self.que[-1]
+
+    def empty(self) -> bool:
+        return not self.que
+  {% endhighlight %}
+
+&nbsp;
