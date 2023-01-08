@@ -1,0 +1,216 @@
+---
+layout: post
+title:  "Algo Day 11"
+date:   2023-01-07 13:48:00 -0000
+categories: [Algorithm,Stack and Queue]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+&nbsp;
+
+### Problem 1:
+
+[20. Valid Parentheses](https://leetcode.com/problems/valid-parentheses/)
+
+* First Thought:
+
+  1. Find my unmatched patterns.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Hard to think of the extra open bracket on the left or on the right scenarios.
+  2. We actually don't have to put open brackets in the stack. only close brackets are needed. 
+  3. Three cases to consider: 1) extra open bracket on the left 2) left and right bracket doesn't match. 3) extra open bracket on the right
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Think of corner cases
+
+&nbsp;
+
+* Conclusion
+  1. original solution:
+  {% highlight python %}
+  class Solution(object):
+    def isValid(self, s):
+        """
+        :type s: str
+        :rtype: bool
+        """
+        # unmatched type: (], (([)]), (([({})]))
+        res = []
+        for c in s:
+            if len(res) == 0:
+                res.append(c)
+            else:
+                top = res[-1]
+                if top == '(' and c == ')':
+                    res.pop()
+                elif top == '(' and c != ')':
+                    res.append(c)
+                elif top == '[' and c == ']':
+                    res.pop()
+                elif top == '[' and c != ']':
+                    res.append(c)
+                elif top == '{' and c == '}':
+                    res.pop()
+                elif top == '{' and c != '}':
+                    res.append(c)
+        return len(res) == 0
+  {% endhighlight %}
+  * better solution:
+    {% highlight python %}
+    class Solution:
+        def isValid(self, s: str) -> bool:
+            stack = []
+            
+            for item in s:
+                if item == '(':
+                    stack.append(')')
+                elif item == '[':
+                    stack.append(']')
+                elif item == '{':
+                    stack.append('}')
+                # third case
+                # second case
+                elif not stack or stack[-1] != item:
+                    return False
+                else:
+                    stack.pop()
+            # first case
+            return True if not stack else False
+    {% endhighlight %}
+
+&nbsp;
+
+### Problem 2:
+
+[1047. Remove All Adjacent Duplicates In String](https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/)
+
+* First Thought:
+
+  1. Stack
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Recursion is implemented with stack
+  2. Segmentation fault is caused by stack overflow
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+  1. Can also use two pointer solution.
+  2. Two pointer solution (very smart):
+  {% highlight python %}
+  class Solution(object):
+    def removeDuplicates(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+        res = list(s)
+        slow = 0
+        fast = 0
+        while fast < len(res):
+            res[slow] = res[fast]
+            if slow - 1 >= 0 and res[slow - 1] == res[slow]:
+                slow -= 1
+            else:
+                slow += 1
+            fast += 1
+        return ''.join(res[:slow])
+  {% endhighlight %}
+
+&nbsp;
+
+### Problem 3:
+
+[150. Evaluate Reverse Polish Notation](https://leetcode.com/problems/evaluate-reverse-polish-notation/)
+
+* First Thought:
+
+  1. Rule is hard to grasp.
+  2. Using stack.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. corner cases. 1 element scenario.
+  2. For some weird reason ceil(int(str1) / int(str2)) doens't round up to 0 even if the calculation result in a float. for example 6/-132 will result in -1. Hence, we should use ceil(float(str1) / float(str2)) instead.
+
+&nbsp;
+
+* Conclusion:
+
+  1. solution:
+  {% highlight python %}
+  class Solution(object):
+    def evalRPN(self, tokens):
+        """
+        :type tokens: List[str]
+        :rtype: int
+        """
+        if len(tokens) == 1:
+            return int(tokens[0])
+        res = []
+        for t in tokens:
+            if t != '+' and t != '-' and t != '*' and t != '/':
+                res.append(t)
+            else:
+                operand1 = res.pop()
+                operand2 = res.pop()
+                if t == '+':
+                    temp = int(operand2) + int(operand1)
+                elif t == '-':
+                    temp = int(operand2) - int(operand1)
+                elif t == '*':
+                    temp = int(operand2) * int(operand1)
+                elif t == '/':
+                    temp = floor(float(operand2) / float(operand1)) if float(operand2) * float(operand1) >= 0 else ceil(float(operand2) / float(operand1))
+                res.append(temp)
+        return int(res[0])
+  {% endhighlight %}
+
+&nbsp;
+
+
+### Tips:
+
+* Recursion is implemented with stack
+* Segmentation fault is caused by stack overflow
+* In enterprise project development, try not to use recursion! When the project is relatively large, due to many parameters, global variables, etc., it's possible that recursion can't fully judge the return condition, which could lead to infinite recursions (or the recursion level is too deep) that causes stack overflow errors.

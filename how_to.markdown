@@ -136,3 +136,6 @@ permalink: /how_to/
 * python extend a list
     res.extend([' '] * counter * 2)
 
+* python how to parse string to do calculation and return integer; formatting string
+    python eval() function parses the expression argument and evaluates it as a python expression
+    int(eval(f'{second_num} {item} {first_num}'))
