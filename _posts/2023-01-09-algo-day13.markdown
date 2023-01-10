@@ -1,0 +1,155 @@
+---
+layout: post
+title:  "Algo Day 13"
+date:   2023-01-09 18:04:00 -0000
+categories: [Algorithm,Stack and Queue]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+&nbsp;
+
+### Problem 1:
+
+[239. Sliding Window Maximum](https://leetcode.com/problems/sliding-window-maximum/)
+
+* First Thought:
+
+  1. brute force but will exceed time limit
+  2. sliding window approach. initial implementation could still exceed time limit since nums.length so huge.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We need a customized queue data structure for this question. (because we should avoid queue being too large)
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Hard to reduce time complexity.
+  2. pop first, then append. 
+
+&nbsp;
+
+* Conclusion
+  1. hard problem
+  2. solution:
+  {% highlight python %}
+    from collections import deque
+
+    class MyQueue(object):
+        def __init__(self):
+            self.queue = deque()
+        
+        def append(self, x):
+            while self.queue and x > self.queue[-1]:
+                self.queue.pop()
+            self.queue.append(x)
+
+        def pop(self, x):
+            if self.queue and x == self.queue[0]:
+                self.queue.popleft()
+        
+        def getMax(self):
+            return self.queue[0]
+
+    class Solution(object):
+        def maxSlidingWindow(self, nums, k):
+            """
+            :type nums: List[int]
+            :type k: int
+            :rtype: List[int]
+            """
+            res = []
+            queue = MyQueue()
+            for i in range(0, k):
+                queue.append(nums[i])
+            res.append(queue.getMax())
+            for i in range(1, len(nums)):
+                if i + k > len(nums):
+                    break
+                deleted = nums[i-1]
+                added = nums[i+k-1]
+                queue.pop(deleted)
+                queue.append(added)
+                res.append(queue.getMax())
+            return res
+  {% endhighlight %}
+
+
+&nbsp;
+
+### Problem 2:
+
+[347. Top K Frequent Elements](https://leetcode.com/problems/top-k-frequent-elements/)
+
+* First Thought:
+
+  1. Should use heap.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. we need to use min-heap and keep a k heap
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Python heap will use the first element of a tuple to sort the heap.
+
+&nbsp;
+
+* Conclusion:
+
+  1. Solution:
+  {% highlight python %}
+  import heapq
+    class Solution(object):
+        def topKFrequent(self, nums, k):
+            """
+            :type nums: List[int]
+            :type k: int
+            :rtype: List[int]
+            """
+            dic = dict()
+            for n in nums:
+                if n not in dic:
+                    dic[n] = 1
+                else:
+                    dic[n] += 1
+            minHeap = []
+            for key, count in dic.items():
+                heapq.heappush(minHeap, (count, key))
+                if len(minHeap) > k:
+                    heapq.heappop(minHeap)
+                
+            res = []
+            for i in range(k-1, -1, -1):
+                res.append(heapq.heappop(minHeap)[1])
+            return res
+  {% endhighlight %}
+
+&nbsp;
+
+### Tips:
+
+* review how each language implements stacks and queues
+* The heap is a complete binary tree, the value of each node in the tree is not less than (or not greater than) the value of its left and right child.

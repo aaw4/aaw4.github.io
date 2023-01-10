@@ -139,3 +139,42 @@ permalink: /how_to/
 * python how to parse string to do calculation and return integer; formatting string
     python eval() function parses the expression argument and evaluates it as a python expression
     int(eval(f'{second_num} {item} {first_num}'))
+
+* python heap
+    # initializing list \
+    li = [5, 7, 9, 1, 3]
+    
+    # using heapify to convert list into heap \
+    heapq.heapify(li)
+
+    # using heappush() to push elements into heap
+    # pushes 4
+    heapq.heappush(li, 4)
+    
+    # printing modified heap
+    print("The modified heap after push is : ", end="")
+    print(list(li))
+    
+    # using heappop() to pop smallest element
+    print("The popped and smallest element is : ", end="")
+    print(heapq.heappop(li))
+
+    import heapq \
+    listForTree = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] \
+    heapq.heapify(listForTree)             # for a min heap \
+    heapq._heapify_max(listForTree)        # for a maxheap!! \
+    If you then want to pop elements, use:
+
+    heapq.heappop(minheap)      # pop from minheap \
+    heapq._heappop_max(maxheap) # pop from maxheap
+
+    (https://www.geeksforgeeks.org/heap-queue-or-heapq-in-python/)[https://www.geeksforgeeks.org/heap-queue-or-heapq-in-python/]
+
+* python how to loop through a dictionary
+    for state, capital in statesAndCapitals.items(): \
+    print(state, ":", capital)
+
+    for i in statesAndCapitals: \
+    print(i, '->', statesAndCapitals[i])
+
+    [https://www.geeksforgeeks.org/iterate-over-a-dictionary-in-python/](https://www.geeksforgeeks.org/iterate-over-a-dictionary-in-python/)
