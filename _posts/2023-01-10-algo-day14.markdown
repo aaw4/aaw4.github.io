@@ -1,0 +1,319 @@
+---
+layout: post
+title:  "Algo Day 14"
+date:   2023-01-10 08:20:00 -0000
+categories: [Algorithm,Tree]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+&nbsp;
+
+### Classification:
+
+1. full binary tree
+2. complete binary tree
+3. binary search tree (O(logn) search efficiency)
+4. balanced binary search tree (height difference no larger than 1)
+
+&nbsp;
+
+### storage method
+
+1. linkedlist
+2. array. (the children of a parent located at i are 2*i+1 and 2*i+2)
+
+&nbsp;
+
+
+### binary tree traversal
+
+1. DFS: pre-order (mid, left, right), in-order (left, mid, right), post-order (left, right, mid) traversal (recursive, iterative method using stack)
+2. BFS: level-order traversal (iterative method using queue)
+
+&nbsp;
+
+
+### binary tree definition
+
+1. C++:
+    {% highlight C++ %}
+        struct TreeNode {
+            int val;
+            TreeNode* left;
+            TreeNode* right;
+            TreeNode(int x) : val(x), left(NULL), right(NULL) {
+
+            }
+        }
+    {% endhighlight %}
+
+&nbsp;
+
+
+### how to traverse binary tree
+* Three steps:
+    1. what is the parameters and return values of the recursive function?
+    2. what is the termination condition?
+    3. what is the logic in a single level of recursion.
+
+&nbsp;
+
+
+#### binary tree traversal code:
+Problem 1: [144. Binary Tree Preorder Traversal](https://leetcode.com/problems/binary-tree-preorder-traversal/description/)
+* recursive method:
+{% highlight python %}
+    # Definition for a binary tree node.
+    # class TreeNode(object):
+    #     def __init__(self, val=0, left=None, right=None):
+    #         self.val = val
+    #         self.left = left
+    #         self.right = right
+    class Solution(object):
+        def preorder(self, root, res):
+            if root == None:
+                return
+            
+            res.append(root.val)
+            self.preorder(root.left, res)
+            self.preorder(root.right, res)
+
+        def preorderTraversal(self, root):
+            """
+            :type root: TreeNode
+            :rtype: List[int]
+            """
+            res = []
+            self.preorder(root, res)
+            return res
+{% endhighlight %}
+
+* iterative method:
+{% highlight python %}
+class Solution(object):
+    def preorderTraversal(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[int]
+        """
+        stack = []
+        res = []
+        stack.append(root)
+        while stack:
+            node = stack.pop()
+            # read
+            if node:
+                res.append(node.val)
+            else:
+                continue
+            # since it's a stack, we push right first then left.
+            stack.append(node.right)
+            stack.append(node.left)
+        return res
+{% endhighlight %}
+
+Problem 2: [145. Binary Tree Postorder Traversal](https://leetcode.com/problems/binary-tree-postorder-traversal/description/)
+* recursive method:
+{% highlight python %}
+    # Definition for a binary tree node.
+    # class TreeNode(object):
+    #     def __init__(self, val=0, left=None, right=None):
+    #         self.val = val
+    #         self.left = left
+    #         self.right = right
+    class Solution(object):
+        def postorder(self, root, res):
+                if root == None:
+                    return
+                
+                self.postorder(root.left, res)
+                self.postorder(root.right, res)
+                res.append(root.val)
+
+        def postorderTraversal(self, root):
+            """
+            :type root: TreeNode
+            :rtype: List[int]
+            """
+            res = []
+            self.postorder(root, res)
+            return res
+{% endhighlight %}
+
+* iterative method: (from preorder traversal to postorder: mid,left,right -> mid,right,left ->reverse-> left,right,mid )
+{% highlight python %}
+class Solution(object):
+    def postorderTraversal(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[int]
+        """
+        stack = []
+        res = []
+        stack.append(root)
+        while stack:
+            node = stack.pop()
+            # read
+            if node:
+                res.append(node.val)
+            else:
+                continue
+            # for postorder, we push left first then right. This is the reverse of preorder.
+            stack.append(node.left)
+            stack.append(node.right)
+        # reverse the result again to have the correct postorder traversal.
+        res = reversed(res)
+        return res
+{% endhighlight %}
+
+
+Problem 3: [94. Binary Tree Inorder Traversal](https://leetcode.com/problems/binary-tree-inorder-traversal/description/)
+* recursive method:
+{% highlight python %}
+    # Definition for a binary tree node.
+    # class TreeNode(object):
+    #     def __init__(self, val=0, left=None, right=None):
+    #         self.val = val
+    #         self.left = left
+    #         self.right = right
+    class Solution(object):
+        def inorder(self, root, res):
+                if root == None:
+                    return
+                
+                self.inorder(root.left, res)
+                res.append(root.val)
+                self.inorder(root.right, res)
+
+        def inorderTraversal(self, root):
+            """
+            :type root: TreeNode
+            :rtype: List[int]
+            """
+            res = []
+            self.inorder(root, res)
+            return res
+{% endhighlight %}
+
+* iterative method:
+{% highlight python %}
+class Solution(object):
+    def inorderTraversal(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[int]
+        """
+        stack = []
+        res = []
+        runner = root
+        while runner or stack:
+            if runner:
+                stack.append(runner)
+                runner = runner.left # left
+            else:
+                runner = stack.pop() 
+                res.append(runner.val) # mid
+                runner = runner.right # right
+        return res
+{% endhighlight %}
+
+&nbsp;
+
+
+### binary tree traversal generalized iterative solution: (only two lines of code changed for each type of traversal)
+* inorder:
+{% highlight python %}
+class Solution:
+    def inorderTraversal(self, root: TreeNode) -> List[int]:
+        result = []
+        st = []
+        if root:
+            st.append(root)
+        while st:
+            node = st.pop()
+            if node != None:
+                if node.right: # add right (None doesn't go into stack)
+                    st.append(node.right)
+                
+                st.append(node) # add mid
+                st.append(None) # mid visited, but not processed yet
+                
+                if node.left: # add left (None doesn't go into stack)
+                    st.append(node.left)
+            else: # only when None, we put node in the result
+                node = st.pop() # retake node from stack
+                result.append(node.val) # add to res
+        return result
+{% endhighlight %}
+
+* preorder:
+{% highlight python %}
+class Solution:
+    def preorderTraversal(self, root: TreeNode) -> List[int]:
+        result = []
+        st= []
+        if root:
+            st.append(root)
+        while st:
+            node = st.pop()
+            if node != None:
+                if node.right: # right
+                    st.append(node.right)
+                if node.left: # left
+                    st.append(node.left)
+                st.append(node) # mid
+                st.append(None)
+            else:
+                node = st.pop()
+                result.append(node.val)
+        return result
+{% endhighlight %}
+
+* postorder:
+
+{% highlight python %}
+class Solution:
+    def postorderTraversal(self, root: TreeNode) -> List[int]:
+        result = []
+        st = []
+        if root:
+            st.append(root)
+        while st:
+            node = st.pop()
+            if node != None:
+                st.append(node) # mid
+                st.append(None)
+                
+                if node.right: # right
+                    st.append(node.right)
+                if node.left: # left
+                    st.append(node.left)
+            else:
+                node = st.pop()
+                result.append(node.val)
+        return result
+{% endhighlight %}
+
+&nbsp;
+
+### Tips:
+
+* Recursion in three steps:
+    1. what is the parameters and return values of the recursive function?
+    2. what is the termination condition?
+    3. what is the logic in a single level of recursion.

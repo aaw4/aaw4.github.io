@@ -178,3 +178,6 @@ permalink: /how_to/
     print(i, '->', statesAndCapitals[i])
 
     [https://www.geeksforgeeks.org/iterate-over-a-dictionary-in-python/](https://www.geeksforgeeks.org/iterate-over-a-dictionary-in-python/)
+
+* python reverse list
+    reversed(listobject)
