@@ -1,0 +1,208 @@
+---
+layout: post
+title:  "Algo Day 15"
+date:   2023-01-11 18:52:00 -0000
+categories: [Algorithm,Tree]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+### Problem 1:
+
+[102. Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/)
+
+* First Thought:
+
+  1. We should use queue for level order traversal
+  2. we need to know queue size at each level to control which level we are on
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Amazing.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. loop condition
+
+&nbsp;
+
+* Conclusion
+  1. solution (could be used to solve 10 other similar problems)
+  {% highlight python %}
+    # Definition for a binary tree node.
+    # class TreeNode(object):
+    #     def __init__(self, val=0, left=None, right=None):
+    #         self.val = val
+    #         self.left = left
+    #         self.right = right
+    class Solution(object):
+        def levelOrder(self, root):
+            """
+            :type root: TreeNode
+            :rtype: List[List[int]]
+            """
+            res = []
+            if not root:
+                return res
+            from collections import deque
+            queue = deque([root])
+            while queue:
+                levelRes = []
+                size = len(queue)
+                while size > 0:
+                    node = queue.popleft()
+                    levelRes.append(node.val)
+                    if node.left:
+                        queue.append(node.left)
+                    if node.right:
+                        queue.append(node.right)
+                    size -= 1
+                res.append(levelRes)
+            return res
+  {% endhighlight %}
+
+
+&nbsp;
+
+### Problem 2:
+
+[226. Invert Binary Tree](https://leetcode.com/problems/invert-binary-tree/)
+
+* First Thought:
+
+  1. Recursion solution should be easy. Follow the recursion three steps.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Can use iterative as well.
+  2. Should approach this question by thinking of which way of traversal we should use.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Preorder Recursion Solution:
+  {% highlight python %}
+    # Definition for a binary tree node.
+    # class TreeNode(object):
+    #     def __init__(self, val=0, left=None, right=None):
+    #         self.val = val
+    #         self.left = left
+    #         self.right = right
+    class Solution(object):
+        def invert(self, root):
+            if root == None:
+                return
+            
+            temp = root.left
+            root.left = root.right
+            root.right = temp
+            self.invert(root.left)
+            self.invert(root.right)
+
+        def invertTree(self, root):
+            """
+            :type root: TreeNode
+            :rtype: TreeNode
+            """
+            self.invert(root)
+            return root
+  {% endhighlight %}
+
+&nbsp;
+
+### Problem 3:
+
+[101. Symmetric Tree](https://leetcode.com/problems/symmetric-tree/)
+
+* First Thought:
+
+  1. inverse the right tree.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Should consider all possible termination conditions.
+  2. postorder traversal
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. decide recursion function parameters
+
+&nbsp;
+
+* Conclusion:
+
+Recursion Solution:
+  {% highlight python %}
+    # Definition for a binary tree node.
+    # class TreeNode(object):
+    #     def __init__(self, val=0, left=None, right=None):
+    #         self.val = val
+    #         self.left = left
+    #         self.right = right
+    class Solution(object):
+        def compare(self, left, right):
+            if left == None and right == None:
+                return True
+            elif (left == None and right != None) or (left != None and right == None):
+                return False
+            elif left.val != right.val:
+                return False
+            
+            res1 = self.compare(left.left, right.right)
+            res2 = self.compare(left.right, right.left)
+            return res1 and res2
+            
+        def isSymmetric(self, root):
+            """
+            :type root: TreeNode
+            :rtype: bool
+            """
+            if not root:
+                return True
+            return self.compare(root.left, root.right)
+  {% endhighlight %}
+
+&nbsp;
+
+>TODO: Iterative methods for above questions
+
+### Tips:
+
+* Recursion in three steps:
+    1. what is the parameters and return values of the recursive function?
+    2. what is the termination condition?
+    3. what is the logic in a single level of recursion.
