@@ -1,0 +1,236 @@
+---
+layout: post
+title:  "Algo Day 16"
+date:   2023-01-12 18:01:00 -0000
+categories: [Algorithm,Tree]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+### Problem 1:
+
+[104. Maximum Depth of Binary Tree](https://leetcode.com/problems/maximum-depth-of-binary-tree/)
+
+* First Thought:
+
+  1. Recursion
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Preorder for depth, postorder for height
+  2. height and depth of a tree is equal...
+
+        but height and depth of a node is not equal because...
+
+        the height is calculated by traversing from the given node to the deepest possible leaf.
+
+        depth is calculated from traversal from root to the given node.....
+  3. Similar questions:
+        [559. Maximum Depth of N-ary Tree](https://leetcode.com/problems/maximum-depth-of-n-ary-tree/)
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Postorder solution
+  {% highlight python %}
+    class solution:
+    def maxdepth(self, root: treenode) -> int:
+        return self.getdepth(root)
+        
+    def getdepth(self, node):
+        if not node:
+            return 0
+        leftheight = self.getdepth(node.left) #left
+        rightheight = self.getdepth(node.right) #right
+        height = 1 + max(leftheight, rightheight) #mid
+        return height
+  {% endhighlight %}
+
+>TODO: preorder solution
+
+&nbsp;
+
+### Problem 2:
+
+[111. Minimum Depth of Binary Tree](https://leetcode.com/problems/minimum-depth-of-binary-tree/)
+
+* First Thought:
+
+  1. Recursion.
+  2. We need to know if a node is a leaf node or not.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. recursion three steps are clearer.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Postorder Recursion Solution:
+  {% highlight python %}
+    class Solution(object):
+        def getMin(self, root):
+            if not root:
+                return 0
+            elif root.left == None and root.right != None:
+                return 1 + self.getMin(root.right)
+            elif root.left != None and root.right == None:
+                return 1 + self.getMin(root.left)
+
+            leftDepth = self.getMin(root.left)
+            rightDepth = self.getMin(root.right)
+            depth = 1 + min(leftDepth, rightDepth)
+            return depth
+
+        def minDepth(self, root):
+            """
+            :type root: TreeNode
+            :rtype: int
+            """
+            return self.getMin(root)
+  {% endhighlight %}
+
+Level-order traversal solution:
+{% highlight python %}
+class Solution(object):
+    def minDepth(self, root):
+        """
+        :type root: TreeNode
+        :rtype: int
+        """
+        if not root:
+            return 0
+        depth = 0
+        from collections import deque
+        queue = deque([root])
+        while queue:
+            size = len(queue)
+            depth += 1
+            while size > 0:
+                node = queue.popleft()
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+                if not node.left and not node.right:
+                    return depth
+                size -= 1
+        return depth
+{% endhighlight %}
+
+>TODO: preorder solution
+&nbsp;
+
+### Problem 3:
+
+[222. Count Complete Tree Nodes](https://leetcode.com/problems/count-complete-tree-nodes/)
+
+* First Thought:
+
+  1. Complete binary tree vs normal binary tree.
+  2. normla binary tree is easy to solve.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We just need to know if the root's subtree is a full binary tree. We have formula for that.
+  2. For a full binary tree, it's height on the left and right are the same.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. solution less than O(n) is hard to think of.
+
+&nbsp;
+
+* Conclusion:
+
+Recursion Solution:
+  {% highlight python %}
+    # Definition for a binary tree node.
+    # class TreeNode(object):
+    #     def __init__(self, val=0, left=None, right=None):
+    #         self.val = val
+    #         self.left = left
+    #         self.right = right
+    class Solution(object):
+        def compare(self, left, right):
+            l = 0
+            r = 0
+            runner1 = left
+            runner2 = right
+            while runner1:
+                l += 1
+                runner1 = runner1.left
+            while runner2:
+                r += 1
+                runner2 = runner2.right
+            if l == r:
+                return l + 1
+            else:
+                return -1
+
+        def count(self, root):
+            if not root:
+                return 0
+            height = self.compare(root.left, root.right)
+            if height != -1:
+                return 2**height - 1
+            
+            leftCount = self.count(root.left)
+            rightCount = self.count(root.right)
+            return leftCount + rightCount + 1
+            
+        def countNodes(self, root):
+            """
+            :type root: TreeNode
+            :rtype: int
+            """
+            if not root:
+                return 0
+            return self.count(root)
+  {% endhighlight %}
+
+* time complexity: O(logn * logn)
+* space complexity: O(logn)
+
+&nbsp;
+
+>TODO: Iterative methods for above questions
