@@ -1,0 +1,233 @@
+---
+layout: post
+title:  "Algo Day 17"
+date:   2023-01-13 20:02:00 -0000
+categories: [Algorithm,Tree]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+### Problem 1:
+
+[110. Balanced Binary Tree](https://leetcode.com/problems/balanced-binary-tree/)
+
+* First Thought:
+
+  1. NA
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Preorder for depth, postorder for height
+  2. height and depth of a tree is equal...
+
+        but height and depth of a node is not equal because...
+
+        the height is calculated by traversing from the given node to the deepest possible leaf.
+
+        depth is calculated from traversal from root to the given node.....
+  3. Very intuitive postorder traversal
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Postorder solution
+  {% highlight python %}
+    # Definition for a binary tree node.
+    # class TreeNode(object):
+    #     def __init__(self, val=0, left=None, right=None):
+    #         self.val = val
+    #         self.left = left
+    #         self.right = right
+    class Solution(object):
+        def getHeight(self, root):
+            if not root:
+                return 0
+
+            left = self.getHeight(root.left)
+            if left == -1:
+                return -1
+            right = self.getHeight(root.right)
+            if right == -1:
+                return -1
+            if abs(left - right) > 1:
+                return -1
+            else:
+                return 1 + max(left, right)
+            
+        def isBalanced(self, root):
+            """
+            :type root: TreeNode
+            :rtype: bool
+            """
+            if not root:
+                return True
+            if self.getHeight(root) != -1:
+                return True
+            return False
+  {% endhighlight %}
+
+  >TODO: iterative solution
+
+
+&nbsp;
+
+### Problem 2:
+
+[257. Binary Tree Paths](https://leetcode.com/problems/binary-tree-paths/)
+
+* First Thought:
+
+  1. Preorder.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We need to pass each path and overall result list into the recursive function.
+  2. Backtracking in the play here.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Backtracking is hard.
+
+&nbsp;
+
+* Conclusion:
+    1. backtracking is key. Backtracking should be with recursion.s
+    2. Recursion Solution:
+    {% highlight python %}
+        # Definition for a binary tree node.
+        # class TreeNode(object):
+        #     def __init__(self, val=0, left=None, right=None):
+        #         self.val = val
+        #         self.left = left
+        #         self.right = right
+        class Solution(object):
+            def findPath(self, root, path, res):
+                path.append(root.val)
+                if not root.left and not root.right:
+                    pathStr = ""
+                    for i in range(len(path)):
+                        if i == len(path) - 1:
+                            pathStr += str(path[i])
+                        else:
+                            pathStr += str(path[i]) + '->'
+                    res.append(pathStr)
+                    return
+                if root.left:
+                    self.findPath(root.left, path, res)
+                    path.pop()
+                if root.right:
+                    self.findPath(root.right, path, res)
+                    path.pop()
+
+
+            def binaryTreePaths(self, root):
+                """
+                :type root: TreeNode
+                :rtype: List[str]
+                """
+                res = []
+                path = []
+                self.findPath(root, path, res)
+                return res
+    {% endhighlight %}
+
+
+>TODO: iteratives solution
+
+&nbsp;
+
+### Problem 3:
+
+[404. Sum of Left Leaves](https://leetcode.com/problems/sum-of-left-leaves/)
+
+* First Thought:
+
+  1. need left leaf's parent to decide on if it's a left leaf.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. follow the recursion three steps will make things a lot clearer and easier.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Hard to construct a clear recursive solution.
+
+&nbsp;
+
+* Conclusion:
+
+Recursion Solution:
+  {% highlight python %}
+    # Definition for a binary tree node.
+    # class TreeNode(object):
+    #     def __init__(self, val=0, left=None, right=None):
+    #         self.val = val
+    #         self.left = left
+    #         self.right = right
+    class Solution(object):
+        
+        def calcSum(self, root):
+            if not root:
+                return 0
+            if not root.left and not root.right:
+                return 0
+            
+            left = self.calcSum(root.left)
+            if root.left and not root.left.left and not root.left.right:
+                left += root.left.val
+            right = self.calcSum(root.right)
+            return left + right
+
+        def sumOfLeftLeaves(self, root):
+            """
+            :type root: TreeNode
+            :rtype: int
+            """
+            if not root:
+                return 0
+            return self.calcSum(root)
+  {% endhighlight %}
+
+
+
+>TODO: Iterative methods for above questions
+
+&nbsp;
+
+### Tips:
+
+* backtracking and recursion must be together.
