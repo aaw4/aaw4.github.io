@@ -187,6 +187,7 @@ Recursive solution (with backtracking)
 * Thoughts After Looking At The Solution:
 
   1. many details.
+  2. similar question: [105. Construct Binary Tree from Preorder and Inorder Traversal](https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)
 
 &nbsp;
 
@@ -239,4 +240,5 @@ Recursive solution (with backtracking)
 
 ### Tips:
 
+* separator_idx = inorder.index(root_val) # in python, we can find the index by using this method.
 * list[:] The main thing to note here is that words[:] returns a copy of the existing list, so you are iterating over a copy, which is not modified. temp = list.copy()

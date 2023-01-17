@@ -1,0 +1,264 @@
+---
+layout: post
+title:  "Algo Day 20"
+date:   2023-01-16 18:19:00 -0000
+categories: [Algorithm,Tree]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+### Problem 1:
+
+[654. Maximum Binary Tree](https://leetcode.com/problems/maximum-binary-tree/)
+
+* First Thought:
+
+  1. very similar to build binary tree from preorder and inorder array.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Tree construction usually uses preorder traversal
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Recursive solution
+  {% highlight python %}
+    # Definition for a binary tree node.
+    # class TreeNode:
+    #     def __init__(self, val=0, left=None, right=None):
+    #         self.val = val
+    #         self.left = left
+    #         self.right = right
+    class Solution:
+        def build(self, nums: List[int]) -> Optional[TreeNode]:
+            if not nums:
+                return None
+            
+            maxNum = max(nums)
+            maxNumIndex = nums.index(maxNum)
+            node = TreeNode(maxNum)
+            left = nums[:maxNumIndex]
+            right = nums[maxNumIndex+1:]
+            node.left = self.build(left)
+            node.right = self.build(right)
+            return node
+
+        def constructMaximumBinaryTree(self, nums: List[int]) -> Optional[TreeNode]:
+            return self.build(nums)
+  {% endhighlight %}
+
+
+&nbsp;
+
+### Problem 2:
+
+[617. Merge Two Binary Trees](https://leetcode.com/problems/merge-two-binary-trees/)
+
+* First Thought:
+
+  1. in-place (modify tree 1)
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. preorder traversal
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. should directly deal with node instead of node.left and node.right. A lot easier.
+
+&nbsp;
+
+* Conclusion:
+    1. Recursion Solution:
+    {% highlight python %}
+        class Solution:
+        def merge(self, root1: Optional[TreeNode], root2: Optional[TreeNode]):
+            if not root1:
+                return root2
+            elif not root2:
+                return root1
+        
+            root1.val += root2.val
+            root1.left = self.merge(root1.left, root2.left)
+            root1.right = self.merge(root1.right, root2.right)
+            return root1
+
+        def mergeTrees(self, root1: Optional[TreeNode], root2: Optional[TreeNode]) -> Optional[TreeNode]:
+            return self.merge(root1, root2)
+    {% endhighlight %}
+
+>TODO: iteratives solution
+
+&nbsp;
+
+### Problem 3:
+
+[700. Search in a Binary Search Tree](https://leetcode.com/problems/search-in-a-binary-search-tree/)
+
+* First Thought:
+
+  1. elements in a binary search tree are unique.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Need to assign recursion to new 'root' for correct return result.
+
+&nbsp;
+
+* Conclusion:
+
+    1. Recursive Solution:
+        {% highlight python %}
+            # Definition for a binary tree node.
+            # class TreeNode:
+            #     def __init__(self, val=0, left=None, right=None):
+            #         self.val = val
+            #         self.left = left
+            #         self.right = right
+            class Solution:
+                def searchBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:
+                    if not root:
+                        return None
+
+                    if root.val == val:
+                        return root  
+                    elif root.val > val:
+                        root = self.searchBST(root.left, val)
+                    elif root.val < val:
+                        root = self.searchBST(root.right, val)
+                    
+                    return root
+        {% endhighlight %}
+
+    2. Iterative Solution:
+        {% highlight python %}
+        class Solution:
+            def searchBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:
+                while root:
+                    if val < root.val:
+                        root = root.left
+                    elif val > root.val:
+                        root = root.right
+                    else:
+                        return root
+                return None
+        {% endhighlight %}
+
+
+&nbsp;
+
+### Problem 4:
+
+[98. Validate Binary Search Tree](https://leetcode.com/problems/validate-binary-search-tree/)
+
+* First Thought:
+
+  1. using inorder traversal to take advantage of binary search tree's characteristics. 
+  2. right child of a subtree's node still needs to be smaller than the subtree's parent node.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. One approach is to use an extra array. Inorder traversal to store values in the array. At the end see if the array is ordered.
+  2. The better approach without extra space is a little tricky as we need to address the problem in the second point of First Thought. We use an extra pre node to record the previous node of the currrent node.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Hard to implement the no extra space method.
+
+&nbsp;
+
+* Conclusion:
+
+    1. Recursive Solution before optimization:
+        {% highlight python %}
+        # Definition for a binary tree node.
+        # class TreeNode:
+        #     def __init__(self, val=0, left=None, right=None):
+        #         self.val = val
+        #         self.left = left
+        #         self.right = right
+        class Solution:
+            def __init__(self):
+                self.maxVal = -float('INF')
+
+            def isValidBST(self, root: Optional[TreeNode]) -> bool:
+                if not root:
+                    return True
+
+                left = self.isValidBST(root.left)   
+
+                if root.val > self.maxVal:
+                    self.maxVal = root.val
+                else:
+                    return False
+
+                right = self.isValidBST(root.right)
+                return left and right
+        {% endhighlight %}
+
+    2. Recursive solution after optimization (two pointer):
+        {% highlight python %}
+        class Solution:
+            def __init__(self):
+                self.pre = None
+
+            def isValidBST(self, root: Optional[TreeNode]) -> bool:
+                if not root:
+                    return True
+
+                left = self.isValidBST(root.left)   
+
+                if self.pre and self.pre.val >= root.val:
+                    return False
+                self.pre = root
+
+                right = self.isValidBST(root.right)
+                return left and right
+        {% endhighlight %}
+
+>TODO: iteratives solution
+
+&nbsp;
