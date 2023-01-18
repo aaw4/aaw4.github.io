@@ -1,0 +1,214 @@
+---
+layout: post
+title:  "Algo Day 21"
+date:   2023-01-17 16:31:00 -0000
+categories: [Algorithm,Tree]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+### Problem 1:
+
+[530. Minimum Absolute Difference in BST](https://leetcode.com/problems/minimum-absolute-difference-in-bst/)
+
+* First Thought:
+
+  1. extra array we can solve this question easily.
+  2. two pointers.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Use Binary Search Tree characteristics. It's ordererd from left to right when using inorder traversal.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Recursive solution
+  {% highlight python %}
+    class Solution:
+        def getMinimumDifference(self, root: Optional[TreeNode]) -> int:
+            minDif = 10**5+1
+            pre = None
+            
+            def traverse(root: Optional[TreeNode]) -> int:
+                nonlocal minDif, pre
+                if not root:
+                    return None
+                traverse(root.left)
+                if pre and abs(root.val-pre.val) <= minDif:
+                    minDif = abs(root.val-pre.val)
+                pre = root
+                traverse(root.right)
+                return root
+
+            traverse(root)
+            return minDif
+  {% endhighlight %}
+
+Iterative solution
+    {% highlight python %}
+        class Solution:
+        def getMinimumDifference(self, root: Optional[TreeNode]) -> int:
+            minDif = 10**5+1
+            pre = None
+            stack = []
+            cur = root
+            while cur or stack:
+                if cur:
+                    stack.append(cur)
+                    cur = cur.left
+                else:
+                    node = stack.pop()
+                    if pre and abs(node.val-pre.val) <= minDif:
+                        minDif = abs(node.val-pre.val)
+                    pre = node
+                    cur = node.right
+            return minDif
+    {% endhighlight %}
+
+
+&nbsp;
+
+### Problem 2:
+
+[501. Find Mode in Binary Search Tree](https://leetcode.com/problems/find-mode-in-binary-search-tree/)
+
+* First Thought:
+
+  1. two pointer
+  2. use a dictionary
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Update result array whenver the maxcount is updated and clear the result array.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. One loop is enough
+
+&nbsp;
+
+* Conclusion:
+    1. Recursion Solution (Two pointer):
+    {% highlight python %}
+        class Solution:
+        def findMode(self, root: Optional[TreeNode]) -> List[int]:
+            res = []
+            count = 0
+            maxOcc = 0
+            pre = None
+
+            def traverse(root: Optional[TreeNode]):
+                nonlocal res, count, maxOcc, pre
+                if not root:
+                    return None
+
+                traverse(root.left)
+                
+                if not pre:
+                    count = 1
+                elif pre.val != root.val:
+                    count = 1
+                elif pre.val == root.val:
+                    count += 1
+                pre = root
+                if count == maxOcc:
+                    res.append(root.val)
+                elif count > maxOcc:
+                    maxOcc = count
+                    res.clear()
+                    res.append(root.val)
+            
+                traverse(root.right)
+
+            traverse(root)
+            return res
+    {% endhighlight %}
+
+>TODO: iteratives solution
+
+&nbsp;
+
+### Problem 3:
+
+[236. Lowest Common Ancestor of a Binary Tree](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/)
+
+* First Thought:
+
+  1. elements are unique.
+  2. Hard to solve.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We should use postorder to mimic looping from bottom to top.
+  2. postorder <-> backtracking
+  
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Need to pass result all the way back to the root node.
+
+&nbsp;
+
+* Conclusion:
+
+    1. Recursive Solution:
+        {% highlight python %}
+            class Solution:
+            def traverse(self, root: Optional[TreeNode], p: Optional[TreeNode], q: Optional[TreeNode]) -> Optional[TreeNode]:
+                if not root:
+                    return None
+                if root == p or root == q:
+                    return root
+                
+                left = self.traverse(root.left, p, q)
+                right = self.traverse(root.right, p, q)
+
+                if not left and not right:
+                    return None
+                elif left and not right:
+                    return left
+                elif not left and right:
+                    return right
+                else:
+                    return root
+                
+            def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+                return self.traverse(root, p, q)
+        {% endhighlight %}
+
+
+&nbsp;

@@ -262,3 +262,7 @@ Recursive solution
 >TODO: iteratives solution
 
 &nbsp;
+
+### Tips:
+
+1. In binary search tree, using a pre node will basically making it like looping through a linkedlist
