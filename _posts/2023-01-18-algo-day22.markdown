@@ -1,0 +1,226 @@
+---
+layout: post
+title:  "Algo Day 22"
+date:   2023-01-18 16:39:00 -0000
+categories: [Algorithm,Tree]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+### Problem 1:
+
+[235. Lowest Common Ancestor of a Binary Search Tree](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/)
+
+* First Thought:
+
+  1. Very similar to LCA of a normal binary search tree.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We can use binary search tree's characteristics to solve this problem.
+  2. If a node's value is in between p and q, this node must be the LCA of p and q. (This is the use of the characteristics of binary search tree)
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Recursive solution
+  {% highlight python %}
+    class Solution:
+        def traverse(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+            if not root:
+                return None
+
+            if root.val > p.val and root.val > q.val:
+                return self.traverse(root.left, p, q)
+            elif root.val < p.val and root.val < q.val:
+                return self.traverse(root.right, p, q)
+            elif (root.val >= p.val and root.val <= q.val) or (root.val <= p.val and root.val >= q.val):
+                return root
+
+
+        def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+            return self.traverse(root, p, q)
+  {% endhighlight %}
+
+Iterative solution very simple.
+
+&nbsp;
+
+### Problem 2:
+
+[701. Insert into a Binary Search Tree](https://leetcode.com/problems/insert-into-a-binary-search-tree/)
+
+* First Thought:
+
+  1. Notice that there may exist multiple valid ways for the insertion, as long as the tree remains a BST after insertion.
+  2. iterative solution is easy.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Recursive solution: use root.left and root.right to catch the return node
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+    1. Recursion Solution (Two pointer):
+    {% highlight python %}
+        class Solution:
+            def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:
+                if not root:
+                    return TreeNode(val)
+                parent = None
+
+                def build(root, val):
+                    nonlocal parent
+                    if not root:
+                        if parent.val > val:
+                            parent.left = TreeNode(val)
+                            return
+                        else:
+                            parent.right = TreeNode(val)
+                            return 
+
+                    parent = root
+                    if root.val > val:
+                        build(root.left, val)
+                    elif root.val < val:
+                        build(root.right, val)
+
+                build(root, val)
+                return root
+    {% endhighlight %}
+
+    * recursive solution (with return value):
+    {% highlight python %}
+    class Solution:
+    def insertIntoBST(self, root: TreeNode, val: int) -> TreeNode:
+
+        # Base Case
+        if not root: return TreeNode(val)
+
+        if val < root.val: 
+            root.left = self.insertIntoBST(root.left, val)
+
+        if root.val < val:
+            root.right = self.insertIntoBST(root.right, val)
+
+        return root
+    {% endhighlight %}
+
+    * iterative solution:
+    {% highlight python %}
+    class Solution:
+    def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:
+        node = TreeNode(val)
+        if not root:
+            return node
+        runner = root
+        while runner:
+            if runner.val > val:
+                if not runner.left:
+                    runner.left = node
+                    return root
+                runner = runner.left
+            elif runner.val < val:
+                if not runner.right:
+                    runner.right = node
+                    return root
+                runner = runner.right
+        return root
+    {% endhighlight %}
+
+&nbsp;
+
+### Problem 3:
+
+[450. Delete Node in a BST](https://leetcode.com/problems/delete-node-in-a-bst/)
+
+* First Thought:
+
+  1. five scenarios: 1. node not found. 2. delete leaf node. 3. left and not right 4. not left and right. 5. left and right
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Hard but once clear about different scenarios, things become easier.
+  2. for scenario 5, we can use the right child of the to-be-deleted node to replace the parent, then, we assign the parent's left child as the left child of the left lowest child of the parent's right child.
+  
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Complex Implementation process.
+
+&nbsp;
+
+* Conclusion:
+
+    1. Recursive Solution:
+        {% highlight python %}
+            class Solution:
+                def deleteNode(self, root: Optional[TreeNode], key: int) -> Optional[TreeNode]:
+                    if not root:
+                        return None
+                    elif root.val == key:
+                        if not root.left and not root.right:
+                            return None
+                        elif root.left and not root.right:
+                            return root.left
+                        elif not root.left and root.right:
+                            return root.right
+                        else:
+                            cur = root.right
+                            while cur.left:
+                                cur = cur.left
+                            cur.left = root.left
+                            return root.right
+                    
+                    if root.val > key:
+                        root.left = self.deleteNode(root.left, key)
+                    if root.val < key:
+                        root.right = self.deleteNode(root.right, key)
+                    return root
+        {% endhighlight %}
+
+>TODO: General Delete node from Binary Tree solution; Iterative Solution
+
+&nbsp;
+
+### Tips:
+
+1. If a node's value is in between p and q, this node must be the LCA of p and q. (This is the use of the characteristics of binary search tree)
