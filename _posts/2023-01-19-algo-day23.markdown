@@ -1,0 +1,159 @@
+---
+layout: post
+title:  "Algo Day 23"
+date:   2023-01-19 17:15:00 -0000
+categories: [Algorithm,Tree]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+### Problem 1:
+
+[669. Trim a Binary Search Tree](https://leetcode.com/problems/trim-a-binary-search-tree/)
+
+* First Thought:
+
+  1. Difficult as we need to adjust the binary search tree.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Recursive solution
+  {% highlight python %}
+    class Solution:
+    def trimBST(self, root: Optional[TreeNode], low: int, high: int) -> Optional[TreeNode]:
+        if not root:
+            return None
+
+        if root.val < low:
+            return self.trimBST(root.right, low, high)
+        elif root.val > high:
+            return self.trimBST(root.left, low, high)
+
+        root.left = self.trimBST(root.left, low, high)
+        root.right = self.trimBST(root.right, low, high)
+        return root
+  {% endhighlight %}
+
+>TODO: Iterative solution
+
+&nbsp;
+
+### Problem 2:
+
+[108. Convert Sorted Array to Binary Search Tree](https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/)
+
+* First Thought:
+
+  1. To make it balance, we build by finding the mid point of the array recursively.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Answer is not unique.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+    1. Recursion Solution:
+    {% highlight python %}
+        class Solution:
+        def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:
+            if not nums:
+                return None
+
+            left, right = 0, len(nums) - 1
+            mid = left + (right - left) // 2
+            node = TreeNode(nums[mid])
+
+            node.left = self.sortedArrayToBST(nums[left:mid])
+            node.right = self.sortedArrayToBST(nums[mid+1:])
+            return node
+    {% endhighlight %}
+
+    >TODO: Iterative Solution
+
+&nbsp;
+
+### Problem 3:
+
+[538. Convert BST to Greater Tree](https://leetcode.com/problems/convert-bst-to-greater-tree/)
+
+* First Thought:
+
+  1. use the order: right->mid->left
+  2. need a pre pointer.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Pre can just be a number instead of a node.
+  
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+    1. Recursive Solution:
+        {% highlight python %}
+            class Solution:
+                def __init__(self):
+                    self.pre = 0
+
+                def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+                    if not root:
+                        return None
+                    
+                    root.right = self.convertBST(root.right)
+                    root.val += self.pre
+                    self.pre = root.val
+                    root.left = self.convertBST(root.left)
+                    return root
+                    {% endhighlight %}
+
+>TODO: Iterative Solution
+
+&nbsp;
