@@ -93,22 +93,22 @@ Recursive solution
 
 * Conclusion:
     1. Recursion Solution:
-    {% highlight python %}
-        class Solution:
-        def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:
-            if not nums:
-                return None
+        {% highlight python %}
+            class Solution:
+            def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:
+                if not nums:
+                    return None
 
-            left, right = 0, len(nums) - 1
-            mid = left + (right - left) // 2
-            node = TreeNode(nums[mid])
+                left, right = 0, len(nums) - 1
+                mid = left + (right - left) // 2
+                node = TreeNode(nums[mid])
 
-            node.left = self.sortedArrayToBST(nums[left:mid])
-            node.right = self.sortedArrayToBST(nums[mid+1:])
-            return node
-    {% endhighlight %}
+                node.left = self.sortedArrayToBST(nums[left:mid])
+                node.right = self.sortedArrayToBST(nums[mid+1:])
+                return node
+        {% endhighlight %}
 
-    >TODO: Iterative Solution
+>TODO: Iterative Solution
 
 &nbsp;
 
