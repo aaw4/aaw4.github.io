@@ -1,0 +1,141 @@
+---
+layout: post
+title:  "Algo Day 24"
+date:   2023-01-20 21:01:00 -0000
+categories: [Algorithm,Backtracking]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Backtracking Algorithm:
+
+1. It's a brute force algorithm. We use this because a lot of problems can only be solved by brute force.
+2. Its logic usually follows a recursive function call.
+
+&nbsp;
+
+### Type of Problems it can solve:
+
+1. combination
+2. cut
+3. subset
+4. permutation
+5. chess board
+
+&nbsp;
+
+### How to use backtracking
+
+1. we can visualize it using n-ary tree
+2. Its width is the size of the whole set.
+3. Its depth is the recursion depth.
+4. Backtracking usually has no return value. (void)
+
+### Backtracking Template
+
+{% highlight python %}
+    void backtracking(param) {
+        if (terminal condition):
+            store result
+            return
+        
+        for (select elements at current level):
+            handle current node
+            backtracking(path, choose list) // recursion
+            backtrack
+    }
+{% endhighlight %}
+
+
+### Problem 1:
+
+[77. Combinations](https://leetcode.com/problems/combinations/)
+
+* First Thought:
+
+  1. NA
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Backtracking is essentially help control how many for loops the algorithm will have.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Duplicate. Hard to decide on start of the loop.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def __init__(self):
+            self.path = []
+            self.res = []
+        
+        def backtracking(self, n: int, k: int, startIndex: int):
+            if len(self.path) == k:
+                self.res.append(self.path[:])
+                return
+            for i in range(startIndex, n):
+                self.path.append(i + 1)
+                self.backtracking(n, k, i + 1)
+                self.path.pop()
+            
+
+        def combine(self, n: int, k: int) -> List[List[int]]:
+            self.backtracking(n, k, 0)
+            return self.res
+  {% endhighlight %}
+
+&nbsp;
+
+Optimized Solution after Pruning:
+    {% highlight python %}
+        class Solution:
+            def __init__(self):
+                self.path = []
+                self.res = []
+            
+            def backtracking(self, n: int, k: int, startIndex: int):
+                if len(self.path) == k:
+                    self.res.append(self.path[:])
+                    return
+                for i in range(startIndex, n - (k - len(self.path)) + 1):
+                    self.path.append(i + 1)
+                    self.backtracking(n, k, i + 1)
+                    self.path.pop()
+                
+
+            def combine(self, n: int, k: int) -> List[List[int]]:
+                self.backtracking(n, k, 0)
+                return self.res
+    {% endhighlight %}
+
+
+### Tips:
+
+1. Pruning usually happens in the for loop range.
