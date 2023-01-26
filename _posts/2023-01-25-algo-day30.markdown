@@ -1,0 +1,218 @@
+---
+layout: post
+title:  "Algo Day 30"
+date:   2023-01-25 21:51:00 -0000
+categories: [Algorithm,Backtracking]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Problem 1:
+
+[39. Combination Sum](https://leetcode.com/problems/combination-sum/)
+
+* First Thought:
+
+  1. All elements of candidates are distinct.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. This question also needs startIndex to control the starting position of the for loop. For the combination problem, when do you need startIndex? If we need to find combinations in a single set, we need startIndex. If we need to find combinations in multiple sets and each set does not affect each other, then startIndex is not used.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Needs to sort the list first to implement pruning.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def __init__(self):
+            self.sum = 0
+            self.path = []
+            self.res = []
+        
+        def backtracking(self, candidates, target, startIndex):
+            if self.sum == target:
+                self.res.append(self.path[:])
+                return
+            
+            for i in range(startIndex, len(candidates)):
+                if self.sum + candidates[i] > target:
+                    return
+                self.sum += candidates[i]
+                self.path.append(candidates[i])
+                self.backtracking(candidates, target, i)
+                self.sum -= candidates[i]
+                self.path.pop()
+
+        def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+            candidates = sorted(candidates)
+            self.backtracking(candidates, target, 0)
+            return self.res
+  {% endhighlight %}
+
+&nbsp;
+
+### Problem 2:
+
+[40. Combination Sum II](https://leetcode.com/problems/combination-sum-ii/)
+
+* First Thought:
+
+  1. Not unique elements. Each valid answer list can only appear once in the result. We need to sort the list first.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. There are two dimensions of 'used.' One is 'used' on the current tree branch. The other is 'used' on the same tree level. If the prior scenario, we can use them as many as we want, but the latter scenario is where the duplicates come from.
+  2. Using a 'used' bool array, if candidates[i - 1] == candidates[i] and used[i] == false, the element is already used and should be skipped. if candidates[i - 1] == candidates[i] and used[i] == true, we are still on the same branch of a tree, so we can have as many same number elements as possible since we are still going deeper into the recursion.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Duplicates
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def __init__(self):
+            self.path = []
+            self.res = []
+        
+        def backtracking(self, candidates, target, sum, startIndex, used):
+            if sum == target:
+                self.res.append(self.path[:])
+                return
+            
+            for i in range(startIndex, len(candidates)):
+                if i > 0 and candidates[i-1] == candidates[i] and used[i-1] == False:
+                    continue
+                if sum + candidates[i] > target:
+                    return
+                sum += candidates[i]
+                self.path.append(candidates[i])
+                used[i] = True
+                self.backtracking(candidates, target, sum, i + 1, used)
+                sum -= candidates[i]
+                self.path.pop()
+                used[i] = False
+
+        def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
+            self.path.clear()
+            self.res.clear()
+            candidates.sort()
+            used = [False] * len(candidates)
+            self.backtracking(candidates, target, 0, 0, used)
+            return self.res
+  {% endhighlight %}
+
+&nbsp;
+
+### Problem 3:
+
+[131. Palindrome Partitioning](https://leetcode.com/problems/palindrome-partitioning/)
+
+* First Thought:
+
+  1. Cutting problem
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We need to draw a tree-like structure to visualize the problem. This will assist us in solving the problem.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. How to decide the cutting point.
+  2. Where to terminate the recursion.
+  3. why is this problem actually a combination problem.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def __init__(self):
+            self.path = []
+            self.res = []
+        
+        def isPalindrome(self, s, start, end):
+            if start > end:
+                return False
+            i = start
+            j = end
+            while i <= j:
+                if s[i] != s[j]:
+                    return False
+                i += 1
+                j -= 1
+            return True
+
+        def backtracking(self, s, startIndex):
+            if startIndex == len(s):
+                self.res.append(self.path[:])
+            
+            for i in range(startIndex, len(s)):
+                if self.isPalindrome(s, startIndex, i):
+                    self.path.append(s[startIndex:i+1])
+                else:
+                    continue
+                self.backtracking(s, i + 1)
+                self.path.pop()
+
+
+        def partition(self, s: str) -> List[List[str]]:
+            self.path.clear()
+            self.res.clear()
+            self.backtracking(s, 0)
+            return self.res
+  {% endhighlight %}
+
+>TODO: We could use dynamic programming to optimize isPalindrome function.
+
+* Python way of finding if palindrome:
+    {% highlight python %}
+        temp = s[start_index:i+1]
+            if temp == temp[::-1]:
+    {% endhighlight%}
+
+* temp[::-1] is a slice notation to reverse the elements of a list in Python. The :: tells python to include all elements in the list, and the -1 is the step value, which means to step backwards through the list, effectively reversing the order of the elements.
+
+&nbsp;
