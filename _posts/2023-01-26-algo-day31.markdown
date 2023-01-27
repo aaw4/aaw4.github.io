@@ -1,0 +1,185 @@
+---
+layout: post
+title:  "Algo Day 31"
+date:   2023-01-26 15:46:00 -0000
+categories: [Algorithm,Backtracking]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Problem 1:
+
+[93. Restore IP Addresses](https://leetcode.com/problems/restore-ip-addresses/)
+
+* First Thought:
+
+  1. Similar to palindrome partitioning, but with more constraints.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We could directly deal with string.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. last integer of the four integers is hard to deal with.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def __init__(self):
+            self.path = []
+            self.res = []
+
+        def backtracking(self, s, startIndex):
+            print(self.path)
+            if len(self.path) == 4:
+                curString = '.'.join(self.path)
+                self.res.append(curString)
+                return
+
+            for i in range(startIndex, len(s) - (4 - len(self.path)) + 1):
+                string = s[startIndex:i+1]
+                if len(self.path) == 3 and string != s[startIndex:]:
+                    continue
+                if len(string) > 1:
+                    if not string[0] == '0' and int(string) >= 0 and int(string) <= 255:
+                        self.path.append(string)
+                    else:
+                        return
+                else:
+                    self.path.append(string)
+                self.backtracking(s, i + 1)
+                self.path.pop()
+
+        def restoreIpAddresses(self, s: str) -> List[str]:
+            if len(s) < 4:
+                return []
+            self.backtracking(s, 0)
+            return self.res
+  {% endhighlight %}
+
+&nbsp;
+
+### Problem 2:
+
+[78. Subsets](https://leetcode.com/problems/subsets/)
+
+* First Thought:
+
+  1. All the numbers of nums are unique.
+  2. Must not contain duplicate rresult.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We just need to keep going forward in the list to avoid duplicates.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. How to deal with duplicates.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def __init__(self):
+            self.path = []
+            self.res = []
+        
+        def backtracking(self, nums, startIndex):
+            self.res.append(self.path[:])
+            for i in range(startIndex, len(nums)):
+                self.path.append(nums[i])
+                self.backtracking(nums, i + 1)
+                self.path.pop()
+
+
+        def subsets(self, nums: List[int]) -> List[List[int]]:
+            self.path.clear()
+            self.res.clear()
+            self.backtracking(nums, 0)
+            return self.res
+  {% endhighlight %}
+
+&nbsp;
+
+### Problem 3:
+
+[90. Subsets II](https://leetcode.com/problems/subsets-ii/)
+
+* First Thought:
+
+  1. It contains duplicates.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def subsetsWithDup(self, nums: List[int]) -> List[List[int]]:
+            path = []
+            res = []
+            nums.sort()
+
+            def backtracking(nums, startIndex):
+                res.append(path[:])
+                for i in range(startIndex, len(nums)):
+                    if i > startIndex and nums[i] == nums[i-1]:
+                        continue
+                    path.append(nums[i])
+                    backtracking(nums, i + 1)
+                    path.pop()
+            
+            backtracking(nums, 0)
+            return res
+  {% endhighlight %}
+
+* This question is the combination of question 40 and 78.
+
+&nbsp;

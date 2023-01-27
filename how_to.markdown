@@ -181,3 +181,12 @@ permalink: /how_to/
 
 * python reverse list
     reversed(listobject)
+
+* python check if a string start with 0
+    {% highlight python %}
+    string = "012345"
+    if string.startswith("0"):
+        print("The string starts with 0")
+    else:
+        print("The string does not start with 0")
+    {% endhighlight %}
