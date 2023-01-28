@@ -1,0 +1,204 @@
+---
+layout: post
+title:  "Algo Day 32"
+date:   2023-01-27 18:30:00 -0000
+categories: [Algorithm,Backtracking]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Problem 1:
+
+[491. Non-decreasing Subsequences](https://leetcode.com/problems/non-decreasing-subsequences/)
+
+* First Thought:
+
+  1. all the different possible non-decreasing subsequences of the given array with at least two elements.
+
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We can use a set to record if an element has been used on the same tree level. (Before for loop -> on each tree level)
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Hard to deal with duplicates come from pattern like this: [4,4,4,6,7,7,6,5,3,2,3,3]. It went up, and then went down.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def findSubsequences(self, nums: List[int]) -> List[List[int]]:
+            path = []
+            res = []
+
+            def backtracking(nums, startIndex):
+                if len(path) >= 2:
+                    res.append(path[:])
+                used = set()
+                for i in range(startIndex, len(nums)):
+                    if nums[i] in used or (path and nums[i] < path[-1]):
+                        continue
+                    used.add(nums[i])
+                    path.append(nums[i])
+                    backtracking(nums, i + 1)
+                    path.pop()
+
+            backtracking(nums, 0)
+            return res
+  {% endhighlight %}
+
+&nbsp;
+
+### Problem 2:
+
+[46. Permutations](https://leetcode.com/problems/permutations/)
+
+* First Thought:
+
+  1. Permutations backtracking problems do not need a startIndex param in the function.
+  2. All the integers of nums are unique.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We can use a 'used' list to record what element has been used.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Think of using a 'used' list.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def permute(self, nums: List[int]) -> List[List[int]]:
+            path = []
+            res = []
+
+            def backtracking(nums, used):
+                if len(path) == len(nums):
+                    res.append(path[:])
+
+                for i in range(len(nums)):
+                    if used[i] == True:
+                        continue
+                    used[i] = True
+                    path.append(nums[i])
+                    backtracking(nums, used)
+                    used[i] = False
+                    path.pop()
+            
+            used = [False] * len(nums)
+            backtracking(nums, used)
+            return res
+  {% endhighlight %}
+
+
+* Since we need to search from index 0 at each new level, we don't need the startIndex param.
+* we could get rid of the used list by using: if nums[i] in path: continue
+
+&nbsp;
+
+### Problem 3:
+
+[47. Permutations II](https://leetcode.com/problems/permutations-ii/)
+
+* First Thought:
+
+  1. It contains duplicates.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. key avoid duplicate code:
+  {% highlight python %}
+    if i > 0 and nums[i] == nums[i - 1] and used[i - 1] == False:
+      continue
+  {% endhighlight %}
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+      def permuteUnique(self, nums: List[int]) -> List[List[int]]:
+          nums.sort()
+          path = []
+          res = []
+
+          def backtracking(nums, used):
+              if len(path) == len(nums):
+                  res.append(path[:])
+                  return
+              
+              for i in range(len(nums)):
+                  if i > 0 and nums[i] == nums[i - 1] and used[i - 1] == False:
+                      continue
+                  if used[i] == False:
+                      used[i] = True
+                      path.append(nums[i])
+                      backtracking(nums, used)
+                      path.pop()
+                      used[i] = False
+                  
+          
+          used = [False] * len(nums)
+          backtracking(nums, used)
+          return res
+  {% endhighlight %}
+
+* Note that:
+  {% highlight python %}
+    if i > 0 and nums[i] == nums[i - 1] and used[i - 1] == False:
+      continue
+  {% endhighlight %}
+
+  {% highlight python %}
+    if i > 0 and nums[i] == nums[i - 1] and used[i - 1] == True:
+      continue
+  {% endhighlight %}
+
+  could both achieve the duplicates avoidance need. Difference is that the prior is avoiding duplicates on tree levels, while the latter is avoiding duplicates on tree depth traverse.
+
+&nbsp;
