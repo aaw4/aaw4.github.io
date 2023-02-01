@@ -1,0 +1,241 @@
+---
+layout: post
+title:  "Algo Day 34"
+date:   2023-01-29 23:30:00 -0000
+categories: [Algorithm,Backtracking]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Problem 1:
+
+[332. Reconstruct Itinerary](https://leetcode.com/problems/reconstruct-itinerary/)
+
+* First Thought:
+
+  1. NA
+
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. The key is the use of container.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. How to choose container.
+  2. How to think of the backtracking solution.
+
+&nbsp;
+
+* Conclusion:
+
+The backtracking here is like mimicking a queue.
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def findItinerary(self, tickets: List[List[str]]) -> List[str]:
+            tickets_dict = defaultdict(list)
+            for item in tickets:
+                tickets_dict[item[0]].append(item[1])
+            for airport in tickets_dict: tickets_dict[airport].sort()
+
+            res = ['JFK']
+            def backtracking(startAirport):
+                if len(res) == len(tickets) + 1:
+                    return True
+                
+                for _ in tickets_dict[startAirport]:
+                    endAirport = tickets_dict[startAirport].pop(0)
+                    res.append(endAirport)
+                    if backtracking(endAirport): return True
+                    res.pop()
+                    tickets_dict[startAirport].append(endAirport)
+            
+            backtracking('JFK')
+            return res
+  {% endhighlight %}
+
+>TODO: Redo this question.
+
+&nbsp;
+
+### Problem 2:
+
+[51. N-Queens](https://leetcode.com/problems/n-queens/)
+
+* First Thought:
+
+  1. NA
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We can think of the placement of the queens as a tree. Starint from first row, to second row, to third row, etc.
+  2. recursion depth is how many rows in the chessboard. Recursion width is the size of the for loop. At each level, for loop controls the cols of the chessboard.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. We only need to check upper left and right corner for ifValid function because we are traversing from top to bottom in the chessboard.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def solveNQueens(self, n: int) -> List[List[str]]:
+            res = []
+
+            def isValid(n, row, col, chessboard):
+                for i in range(n):
+                    if chessboard[i][col] == 'Q':
+                        return False
+                
+                # upper left corner
+                i = row - 1
+                j = col - 1
+                while j >= 0 and i >= 0:
+                    if chessboard[i][j] == 'Q':
+                        return False
+                    j -= 1
+                    i -= 1
+                
+                # upper right corner
+                i = row - 1
+                j = col + 1
+                while j < n and i >= 0:
+                    if chessboard[i][j] == 'Q':
+                        return False
+                    j += 1
+                    i -= 1
+                
+                return True
+
+
+            def backtracking(n, row, chessboard):
+                if row == n:
+                    oneRes = []
+                    for r in chessboard:
+                        temp = ''.join(r)
+                        oneRes.append(temp)
+                    res.append(oneRes)
+                    return 
+                
+                for col in range(n):
+                    if isValid(n, row, col, chessboard):
+                        chessboard[row][col] = 'Q'
+                        backtracking(n, row + 1, chessboard)
+                        chessboard[row][col] = '.'
+            
+            chessboard = [['.' for _ in range(n)] for _ in range(n)]
+            backtracking(n, 0, chessboard)
+            return res
+  {% endhighlight %}
+
+
+>TODO: Redo this question.
+
+&nbsp;
+
+### Problem 3:
+
+[37. Sudoku Solver](https://leetcode.com/problems/sudoku-solver/)
+
+* First Thought:
+
+  1. 2 dimensional backtracking
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Since we only need one solution, we should use bool as the return type as once we find a solution at the leaf, we will return the path.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Python variable shallow vs deep copy
+  2. We have to consider the case where there's no solution. Need to return 'False' in the loop, otherwise the backtracking function will run into a infinite loop.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def solveSudoku(self, board: List[List[str]]) -> None:
+            """
+            Do not return anything, modify board in-place instead.
+            """
+
+            def backtracking(board):
+                for row in range(9):
+                    for col in range(9):
+                        if board[row][col] != '.':
+                            continue
+                        for i in range(1, 10):
+                            if isValid(i, row, col, board):
+                                board[row][col] = str(i)
+                                if backtracking(board): return True
+                                board[row][col] = '.'
+                        return False
+                return True
+
+            def isValid(i, row, col, board):
+                # row
+                for c in range(9):
+                    if board[row][c] == str(i):
+                        return False
+                    
+                # col
+                for r in range(9):
+                    if board[r][col] == str(i):
+                        return False
+                    
+                # in 3*3 sub-box
+                startRow = (row // 3) * 3
+                startCol = (col // 3) * 3
+                for r in range(startRow, startRow + 3):
+                    for c in range(startCol, startCol + 3):
+                        if board[r][c] == str(i):
+                            return False
+
+                return True
+
+            backtracking(board)
+            return
+  {% endhighlight %}
+
+&nbsp;
+
+### Tips:
+
