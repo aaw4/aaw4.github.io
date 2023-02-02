@@ -1,0 +1,175 @@
+---
+layout: post
+title:  "Algo Day 35"
+date:   2023-01-30 23:38:00 -0000
+categories: [Algorithm,Greedy]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+### What is Greedy Algorithm?
+
+* local maximum -> global maximum
+
+### How to know if to use greedy
+
+* Try to find counter example. If can't find any, try greedy. Else, try dynamic programming.
+
+## Four steps of solving a greedy problem
+
+1. divide the problem into subproblems
+2. find the suitable greedy strategy
+3. find the best solution for each subproblem
+4. stack local best solution into global best solution
+
+### Problem 1:
+
+[455. Assign Cookies](https://leetcode.com/problems/assign-cookies/)
+
+* First Thought:
+
+  1. Greedy problem
+  2. Try to find the cake for the greedest child.
+
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We can feed least greedy child with smallest cookie, or the other way around.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def findContentChildren(self, g: List[int], s: List[int]) -> int:
+            g.sort(reverse = True)
+            s.sort(reverse = True)
+            count, i, j = 0, 0, 0
+            while i < len(g) and j < len(s):
+                if g[i] <= s[j]:
+                    count += 1
+                    i += 1
+                    j += 1
+                else:
+                    i += 1
+            return count
+  {% endhighlight %}
+
+
+&nbsp;
+
+### Problem 2:
+
+[376. Wiggle Subsequence](https://leetcode.com/problems/wiggle-subsequence/)
+
+* First Thought:
+
+  1. NA
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Greedy solution: only needs to record the peaks.
+  2. DP: O(nlogn) time complexity, O(n) space complexity.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Greedy three corner cases: # 1,2,2,2,1 # 2,5 #1,2,2,2,3,4 (Difference == 0 scenarios)
+
+
+&nbsp;
+
+* Conclusion:
+
+Greedy Solution:
+  {% highlight python %}
+    class Solution:
+        def wiggleMaxLength(self, nums: List[int]) -> int:
+            if len(nums) <= 1: return 1
+            # 1,2,2,2,1
+            # 2,5
+            #1,2,2,2,3,4
+            count = 1
+            preDif = 0
+            curDif = 0
+            for i in range(0, len(nums) - 1):
+                curDif = nums[i + 1] - nums[i]
+                if (curDif > 0 and preDif <= 0) or (curDif < 0 and preDif >= 0):
+                    count += 1
+                    preDif = curDif
+            return count
+  {% endhighlight %}
+
+>TODO: DP Solution
+
+
+&nbsp;
+
+### Problem 3:
+
+[53. Maximum Subarray](https://leetcode.com/problems/maximum-subarray/)
+
+* First Thought:
+
+  1. Always start from positive number/ Largest negative number
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Greedy: Give up as soon as count is negative.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Hard to write concise code.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def maxSubArray(self, nums: List[int]) -> int:
+            maxSum = float('-INF')
+            count = 0
+            for i in range(len(nums)):
+                count += nums[i]
+                if count > maxSum: maxSum = count
+                if count < 0: count = 0
+            return maxSum
+    {% endhighlight %}
+
+&nbsp;
