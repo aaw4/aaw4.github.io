@@ -1,0 +1,146 @@
+---
+layout: post
+title:  "Algo Day 36"
+date:   2023-01-31 19:50:00 -0000
+categories: [Algorithm,Greedy]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Problem 1:
+
+[122. Best Time to Buy and Sell Stock II](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/)
+
+* First Thought:
+
+  1. Greedy problem
+
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Try to divide whole profit into two days profit sequence. For example, prices[3] - prices[0] = prices[1] - prices[0] + prices[2] - prices[1] + prices[3] - prices[2]
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Hard to think of solution.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def maxProfit(self, prices: List[int]) -> int:
+            profit = 0
+            for i in range(1, len(prices)):
+                tempProfit = prices[i] - prices[i - 1]
+                if tempProfit > 0: profit += tempProfit
+            return profit
+  {% endhighlight %}
+
+
+&nbsp;
+
+### Problem 2:
+
+[55. Jump Game](https://leetcode.com/problems/jump-game/)
+
+* First Thought:
+
+  1. NA
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. The largest range index before the last can cover
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Hard to think of solution.
+  2. while i <= cover # i can only move within the range (deal with range == 0 scenario)
+
+
+&nbsp;
+
+* Conclusion:
+
+Greedy Solution:
+  {% highlight python %}
+    class Solution:
+        def canJump(self, nums: List[int]) -> bool:
+            maxRange = 0
+            for i in range(len(nums)):
+                if i <= maxRange:
+                    maxRange = max(maxRange, i + nums[i])
+                    if maxRange >= len(nums) - 1: return True
+            return False
+  {% endhighlight %}
+
+
+&nbsp;
+
+### Problem 3:
+
+[45. Jump Game II](https://leetcode.com/problems/jump-game-ii/)
+
+* First Thought:
+
+  1. We know we for sure can reach nums[n-1]
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Greedy: Spending the min steps to cover the larger range.
+  2. We need to record two ranges. Current step's largest range and next step's largest range.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Hard to think of the solution.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+      def jump(self, nums: List[int]) -> int:
+          curMax, nextMax, step = 0, 0, 0
+          for i in range(len(nums) - 1):
+              nextMax = max(nextMax, i + nums[i])
+              if i == curMax:
+                  step += 1
+                  curMax = nextMax
+          return step
+  {% endhighlight %}
+
+&nbsp;
