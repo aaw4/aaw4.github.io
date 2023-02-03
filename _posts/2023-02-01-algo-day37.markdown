@@ -1,0 +1,156 @@
+---
+layout: post
+title:  "Algo Day 37"
+date:   2023-02-01 15:29:00 -0000
+categories: [Algorithm,Greedy]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Problem 1:
+
+[1005. Maximize Sum Of Array After K Negations](https://leetcode.com/problems/maximize-sum-of-array-after-k-negations/)
+
+* First Thought:
+
+  1. Negate the smallest negative number, negate the smallest positive number. 
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Need to sort. Pay attention to absolute value!
+  2. No need to keep count of the sum.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Absolute Value should be used to sort the list!
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def largestSumAfterKNegations(self, nums: List[int], k: int) -> int:
+            nums = sorted(nums, key = abs, reverse = True)
+            i = 0
+            while i < len(nums) and k > 0:
+                if nums[i] < 0:
+                    nums[i] *= -1
+                    k -= 1
+                i += 1
+            if k > 0: nums[-1] *= (-1)**k
+            return sum(nums)
+  {% endhighlight %}
+
+
+&nbsp;
+
+### Problem 2:
+
+[134. Gas Station](https://leetcode.com/problems/gas-station/)
+
+* First Thought:
+
+  1. brute force (will exceed time limit)
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Greedy. 
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Hard to think of solution.
+
+
+&nbsp;
+
+* Conclusion:
+
+Greedy Solution:
+  {% highlight python %}
+    class Solution:
+        def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:
+            start = 0
+            curSum = 0
+            totalSum = 0
+            i = 0
+            while i < len(gas):
+                curSum += gas[i] - cost[i]
+                totalSum += gas[i] - cost[i]
+                if curSum < 0:
+                    start = i + 1
+                    curSum = 0
+                i += 1
+            if totalSum < 0:
+                return -1
+            return start
+  {% endhighlight %}
+
+
+&nbsp;
+
+### Problem 3:
+
+[135. Candy](https://leetcode.com/problems/candy/)
+
+* First Thought:
+
+  1. NA
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. determine left, then determine right. Should be seperate process.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Hard to think of the solution.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+      def candy(self, ratings: List[int]) -> int:
+          alloc = [1] * len(ratings)
+          for i in range(len(ratings) - 1):
+              if ratings[i+1] > ratings[i]: alloc[i+1] = alloc[i] + 1
+          for i in range(len(ratings) - 2, -1, -1):
+              if ratings[i] > ratings[i+1]:
+                  alloc[i] = max(alloc[i], alloc[i+1] + 1) # ensure that alloc[i] > alloc[i-1] and alloc[i] < alloc[i+1]
+          return sum(alloc)
+  {% endhighlight %}
+
+&nbsp;
