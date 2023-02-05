@@ -190,3 +190,6 @@ permalink: /how_to/
     else:
         print("The string does not start with 0")
     {% endhighlight %}
+
+* python sort when there's a tie:
+    people.sort(key=lambda x: (-x[0], x[1]))
