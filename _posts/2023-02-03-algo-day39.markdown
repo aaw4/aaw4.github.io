@@ -1,0 +1,178 @@
+---
+layout: post
+title:  "Algo Day 39"
+date:   2023-02-03 19:12:00 -0000
+categories: [Algorithm,Greedy]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Problem 1:
+
+[435. Non-overlapping Intervals](https://leetcode.com/problems/non-overlapping-intervals/)
+
+* First Thought:
+
+  1. Sort
+  2. update minEnd as we go.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+      def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:
+          count = 0
+          intervals.sort(key = lambda x: (x[0], x[1]))
+          minEnd = intervals[0][1]
+          for i in range(1, len(intervals)):
+              if intervals[i][0] < minEnd:
+                  count += 1
+                  minEnd = min(minEnd, intervals[i][1])
+              else:
+                  minEnd = intervals[i][1]
+          return count
+  {% endhighlight %}
+
+Another solution (sort based on end. calculate non overlapping first, then use overall interval to minus this result)
+  {% highlight python %}
+    class Solution:
+      def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:
+          if len(intervals) == 0: return 0
+          intervals.sort(key=lambda x: x[1])
+          count = 1
+          end = intervals[0][1]
+          for i in range(1, len(intervals)):
+              if end <= intervals[i][0]:
+                  count += 1
+                  end = intervals[i][1]
+          return len(intervals) - count
+  {% endhighlight %}
+
+
+&nbsp;
+
+### Problem 2:
+
+[763. Partition Labels](https://leetcode.com/problems/partition-labels/)
+
+* First Thought:
+
+  1. NA
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Two steps: 1. record the last appearance of each letter. 2. Loop again and dynamically update the farthest index. If current index eqauls to the farthest index, we find the target.
+  2. It can also be solved in the same way as question 435. We can record the start and end of each alphabet, which is similar to question 435's intervals. We can find all non overlapping intervals to get our result.
+
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Hard to think of solutions.
+
+
+&nbsp;
+
+* Conclusion:
+
+Greedy Solution:
+  {% highlight python %}
+    class Solution:
+        def partitionLabels(self, s: str) -> List[int]:
+            res = []
+            dic = [0] * 26
+            for i in range(len(s)):
+                dic[ord(s[i]) - ord('a')] = i
+            startIndex = 0
+            farIndex = dic[ord(s[0]) - ord('a')]
+            for i in range(len(s)):
+                farIndex = max(farIndex, dic[ord(s[i]) - ord('a')])
+                if i == farIndex:
+                    res.append(i + 1 - startIndex)
+                    startIndex = i + 1
+            return res
+  {% endhighlight %}
+
+
+&nbsp;
+
+### Problem 3:
+
+[56. Merge Intervals](https://leetcode.com/problems/merge-intervals/description/)
+
+* First Thought:
+
+  1. Sort by start. Sort by end in case there's a tie.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Need to take care of the last element in the list.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def merge(self, intervals: List[List[int]]) -> List[List[int]]:
+            res = []
+            intervals.sort(key = lambda x: (x[0], x[1]))
+            leftMost = intervals[0][0]
+            rightMost = intervals[0][1]
+            for i in range(1, len(intervals)):
+                if intervals[i][0] <= rightMost:
+                    rightMost = max(rightMost, intervals[i][1])
+                else:
+                    res.append([leftMost, rightMost])
+                    leftMost = intervals[i][0]
+                    rightMost = intervals[i][1]
+            res.append([leftMost, rightMost])
+            return res
+  {% endhighlight %}
+
+&nbsp;
