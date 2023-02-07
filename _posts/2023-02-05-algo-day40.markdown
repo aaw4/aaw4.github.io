@@ -1,0 +1,173 @@
+---
+layout: post
+title:  "Algo Day 40"
+date:   2023-02-05 20:19:00 -0000
+categories: [Algorithm,Greedy]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Problem 1:
+
+[738. Monotone Increasing Digits](https://leetcode.com/problems/monotone-increasing-digits/)
+
+* First Thought:
+
+  1. Start from ones digit.
+  2. If less than tens digit, make tens digit --1, ones digit 9.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. We need to decide from where we need to give 9 in the list
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+      def monotoneIncreasingDigits(self, n: int) -> int:
+          nList = [int(i) for i in str(n)]
+          for i in range(len(nList) - 1, -1, -1):
+              if i - 1 >= 0 and nList[i-1] > nList[i]:
+                  nList[i - 1] -= 1
+                  nList[i:] = [9] * (len(nList) - i)
+          return int(''.join(str(i) for i in nList))
+  {% endhighlight %}
+
+
+&nbsp;
+
+### Problem 2:
+
+[714. Best Time to Buy and Sell Stock with Transaction Fee](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/)
+
+* First Thought:
+
+  1. Dynamic Programming.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We need to know when to buy and sell. (different from where there's no trasaction cost)
+
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. How to reset buyPrice when 'if prices[i] - buyPrice - fee > 0:'
+
+
+&nbsp;
+
+* Conclusion:
+
+Greedy Solution:
+  {% highlight python %}
+    class Solution:
+      def maxProfit(self, prices: List[int], fee: int) -> int:
+          buyPrice = 10**5
+          profit = 0
+          for i in range(len(prices)):
+              if prices[i] < buyPrice:
+                  buyPrice = prices[i]
+              else:
+                  if prices[i] - buyPrice - fee > 0:
+                      profit += prices[i] - buyPrice - fee
+                      buyPrice = prices[i] - fee # this step is crucial
+          return profit
+  {% endhighlight %}
+
+>TODO: DP solution
+
+
+&nbsp;
+
+### Problem 3:
+
+[968. Binary Tree Cameras](https://leetcode.com/problems/binary-tree-cameras/)
+
+* First Thought:
+
+  1. Binary tree postorder traversal
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Need to count the root's return value after recursion is done.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    # Definition for a binary tree node.
+    # class TreeNode:
+    #     def __init__(self, val=0, left=None, right=None):
+    #         self.val = val
+    #         self.left = left
+    #         self.right = right
+    class Solution:
+        def minCameraCover(self, root: Optional[TreeNode]) -> int:
+            result = 0
+            
+            # 2 denotes covered, 1 denotes camera, 0 denotes not covered
+            def traversal(root):
+                nonlocal result
+                if not root:
+                    return 2
+
+                left = traversal(root.left)
+                right = traversal(root.right)
+
+                if left == 2 and right == 2:
+                    return 0
+                elif left == 0 or right == 0:
+                    result += 1
+                    return 1
+                elif left == 1 or right == 1:
+                    return 2
+                
+            if traversal(root) == 0:
+                result += 1
+            return result
+  {% endhighlight %}
+
+&nbsp;
