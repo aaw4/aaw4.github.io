@@ -1,0 +1,188 @@
+---
+layout: post
+title:  "Algo Day 42"
+date:   2023-02-06 19:22:00 -0000
+categories: [Algorithm,Dynamic Programming]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+### What is dynamic programming
+
+* Most effective when a problem have many repetitive sub problems.
+* Each state in a dp is derived from the last state.
+
+### Five steps to solve a dp problem
+
+1. understand dp table and its index's meaning
+2. decide trasition formula
+3. how to initialize dp table
+4. decide iteration order
+5. make examples of how transform dp evolves.
+
+### How to debug dp problem
+
+1. print the dp table
+2. have to simulate the trasition formula on hand first
+3. See if the print result is consistant with the hand-written simulation.
+
+
+
+### Problem 1:
+
+[509. Fibonacci Number](https://leetcode.com/problems/fibonacci-number/)
+
+* First Thought:
+
+  1. dp[i] = dp[i-1] + dp[i-2]
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  five steps:
+  1. dp[i] is ith number's fibonacci value
+  2. transition formula: dp[i] = dp[i-1] + dp[i-2]
+  3. how to initialize: dp[0] = 0, dp[1] = 1
+  4. iterate from start to end
+  5. With the formula, the value sequence is: 0 1 1 2 3 5 8 13 21
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+      def fib(self, n: int) -> int:
+          if n == 0: return 0
+          dp = [0] * (n + 1)
+          dp[0] = 0
+          dp[1] = 1
+          for i in range(2, n + 1):
+              dp[i] = dp[i - 1] + dp[i - 2]
+          return dp[n]
+  {% endhighlight %}
+
+Solution (Not keeping the whole sequence):
+  {% highlight python %}
+    class Solution:
+        def fib(self, n: int) -> int:
+            if n == 0: return 0
+            dp = [0] * 2
+            dp[0] = 0
+            dp[1] = 1
+            for i in range(2, n + 1):
+                sum = dp[0] + dp[1]
+                dp[0] = dp[1]
+                dp[1] = sum
+            return dp[1]
+  {% endhighlight %}
+
+
+&nbsp;
+
+### Problem 2:
+
+[70. Climbing Stairs](https://leetcode.com/problems/climbing-stairs/)
+
+* First Thought:
+
+  1. Similar to fibonacci. Difference is we need to find pattern ourselves.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. For dp[i - 1], there are dp[i - 1] ways to go up the i-1 stairs, so jumping one step is dp[i]. For dp[i - 2], there are dp[i - 2] ways to go up the i-2 stairs, so jumping two steps is dp[i]. This way we get our transition formula.
+
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def climbStairs(self, n: int) -> int:
+            if n == 1: return 1
+            dp = [0] * 2
+            dp[0] = 1
+            dp[1] = 2
+            for i in range(2, n):
+                temp = dp[0] + dp[1]
+                dp[0] = dp[1]
+                dp[1] = temp
+            return dp[1]
+  {% endhighlight %}
+
+
+&nbsp;
+
+### Problem 3:
+
+[746. Min Cost Climbing Stairs](https://leetcode.com/problems/min-cost-climbing-stairs/)
+
+* First Thought:
+
+  1. dp[i] is the min cost when arriving at the ith stair. (include cost[i])
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Iteration order is important. It's not obvious in this problem, but it's a difficult aspect of dp.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Define dp[i] is hard.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def minCostClimbingStairs(self, cost: List[int]) -> int:
+            dp = [0] * len(cost)
+            dp[0] = cost[0]
+            dp[1] = cost[1]
+            for i in range(2, len(cost)):
+                dp[i] = min(dp[i - 1], dp[i - 2]) + cost[i]
+            return min(dp[-1], dp[-2])
+  {% endhighlight %}
+
+&nbsp;

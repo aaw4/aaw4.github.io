@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Algo Day 40"
+title:  "Algo Day 41"
 date:   2023-02-05 20:19:00 -0000
 categories: [Algorithm,Greedy]
 ---
