@@ -1,0 +1,116 @@
+---
+layout: post
+title:  "Algo Day 43"
+date:   2023-02-07 20:25:00 -0000
+categories: [Algorithm,Dynamic Programming]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Problem 1:
+
+[62. Unique Paths](https://leetcode.com/problems/unique-paths/)
+
+* First Thought:
+
+  1. dp table. Fill.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We can also use only an one-dimensional list.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def uniquePaths(self, m: int, n: int) -> int:
+            dp = [[0 for _ in range(n)] for _ in range(m)]
+            for j in range(n):
+                dp[0][j] = 1
+            for i in range(m):
+                dp[i][0] = 1
+            for i in range(1, m):
+                for j in range(1, n):
+                    dp[i][j] = dp[i-1][j] + dp[i][j-1]
+            return dp[-1][-1]
+  {% endhighlight %}
+
+
+&nbsp;
+
+### Problem 2:
+
+[63. Unique Paths II](https://leetcode.com/problems/unique-paths-ii/description/)
+
+* First Thought:
+
+  1. Similar to Unique Paths I, but needs some twist.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Python 2d list initialization
+
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
+            dp = [[0 for _ in range(len(obstacleGrid[0]))] for _ in range(len(obstacleGrid))]
+            for j in range(len(obstacleGrid[0])):
+                if obstacleGrid[0][j] == 1:
+                    break
+                dp[0][j] = 1
+            for i in range(len(obstacleGrid)):
+                if obstacleGrid[i][0] == 1:
+                    break
+                dp[i][0] = 1
+            for i in range(1, len(obstacleGrid)):
+                for j in range(1, len(obstacleGrid[0])):
+                    if obstacleGrid[i][j] == 0:
+                        dp[i][j] = dp[i-1][j] + dp[i][j-1]
+            return dp[-1][-1]
+  {% endhighlight %}
+
+
+&nbsp;
