@@ -1,0 +1,125 @@
+---
+layout: post
+title:  "Algo Day 44"
+date:   2023-02-08 10:03:00 -0000
+categories: [Algorithm,Dynamic Programming]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Problem 1:
+
+[343. Integer Break](https://leetcode.com/problems/integer-break/)
+
+* First Thought:
+
+  1. NA
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. dp[i] represents the max product we can get
+  2. dp transition formula: dp[i] = max(dp[i], j * (i - j), j * dp[i-j]). Key is we can reuse the data calculated, but also need to count in previous 'i' as a whole number.
+  3. usually the closer the numbers divided from the original number are, the larger their product will be. For example, break 10. 5 * 5, 3 * 3 * 4 are larger then 6 * 4, 2 * 3 * 5 respectively. Hence, we only need to loop till n / 2, then stop.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Hard to think of solution.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def integerBreak(self, n: int) -> int:
+            dp = [0] * (n + 1)
+            dp[0] = 0
+            dp[1] = 0
+            dp[2] = 1
+            for i in range(3, n + 1):
+                for j in range(1, i + 1):
+                    dp[i] = max(dp[i], j * (i - j), j * dp[i-j])
+            return dp[n]
+  {% endhighlight %}
+
+Optimized solution:
+  {% highlight python %}
+    class Solution:
+      def integerBreak(self, n: int) -> int:
+          dp = [0] * (n + 1)
+          dp[0] = 0
+          dp[1] = 0
+          dp[2] = 1
+          for i in range(3, n + 1):
+              for j in range(1, i // 2 + 1):
+                  dp[i] = max(dp[i], j * (i - j), j * dp[i-j])
+          return dp[n]
+  {% endhighlight %}
+
+
+&nbsp;
+
+### Problem 2:
+
+[96. Unique Binary Search Trees](https://leetcode.com/problems/unique-binary-search-trees/)
+
+* First Thought:
+
+  1. We could reuse the result from n = i-1 for n = i
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Permutation.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Think of using left tree dp to multiply by right tree dp.
+
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def numTrees(self, n: int) -> int:
+            # dp[i] should represents the number of structurally unique BST
+            dp = [0] * (n + 1)
+            dp[0] = 1
+            dp[1] = 1
+            for i in range(2, n + 1):
+                for j in range(0, i):
+                    dp[i] += dp[j] * dp[i - 1 - j]
+            return dp[n]
+  {% endhighlight %}
+
+
+&nbsp;
