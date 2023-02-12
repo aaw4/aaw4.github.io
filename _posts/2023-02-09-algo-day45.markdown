@@ -1,0 +1,107 @@
+---
+layout: post
+title:  "Algo Day 45"
+date:   2023-02-09 13:11:00 -0000
+categories: [Algorithm,Dynamic Programming]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Backpack problem:
+
+#### 01 backpack problem:
+
+2D array approach: 
+{% highlight C++ %}
+  if (j < weight[i]) dp[i][j] = dp[i - 1][j];
+          else dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - weight[i]] + value[i]);
+{% endhighlight %}
+
+1D array approach:
+{% highlight C++ %}
+  dp[j] = max(dp[j], dp[j - weight[i]] + value[i]);
+{% endhighlight %}
+
+
+
+### Problem 1:
+
+[416. Partition Equal Subset Sum](https://leetcode.com/problems/partition-equal-subset-sum/)
+
+* First Thought:
+
+  1. backtracking can solve this problem, but will exceed time limit.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We have to make sure those 4 points before making it a 01 backpack problem: 1. size of backpack should be sum / 2; 2. the backpack's item's weight and value should be the element in the array. 3. If the backpack is full, that means we find a subset that has a sum of sum / 2; 4. item can only be put in the backpack once.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Hard to think of solution.
+
+&nbsp;
+
+* Conclusion:
+
+2D array Solution:
+  {% highlight python %}
+    class Solution:
+        def canPartition(self, nums: List[int]) -> bool:
+            sumNums = sum(nums)
+            if len(nums) == 1 or sumNums % 2 == 1: return False
+            dp = [[0 for _ in range(sumNums // 2 + 1)] for _ in range(len(nums))]
+            for j in range(1, len(dp[0])):
+                if nums[0] <= j:
+                    dp[0][j] = nums[0]
+            
+            for i in range(1, len(dp)):
+                for j in range(1, len(dp[0])):
+                    if nums[i] > j:
+                        dp[i][j] = dp[i-1][j]
+                    else:
+                        dp[i][j] = max(dp[i-1][j], dp[i-1][j-nums[i]] + nums[i])
+                    if j == len(dp[0]) - 1 and dp[i][j] == j:
+                        return True      
+            return False
+  {% endhighlight %}
+
+1D array Solution:
+  {% highlight python %}
+    class Solution:
+      def canPartition(self, nums: List[int]) -> bool:
+          sumNums = sum(nums)
+          if sumNums % 2 == 1: return False
+          dp = [0 for _ in range(sumNums // 2 + 1)]
+          for i in range(len(nums)):
+              for j in range(len(dp) - 1, nums[i] - 1, -1):
+                  dp[j] = max(dp[j], dp[j-nums[i]] + nums[i])
+          
+          if dp[-1] == sumNums // 2:
+              return True
+          return False
+  {% endhighlight %}
+
+&nbsp;
