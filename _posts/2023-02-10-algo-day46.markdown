@@ -1,0 +1,154 @@
+---
+layout: post
+title:  "Algo Day 46"
+date:   2023-02-12 13:33:00 -0000
+categories: [Algorithm,Dynamic Programming]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+#### Below problems are all 01 backpack problems.
+
+
+### Problem 1:
+
+[1049. Last Stone Weight II](https://leetcode.com/problems/last-stone-weight-ii/)
+
+* First Thought:
+
+  1. NA
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Very similar to the 416. Partition Equal Subset Sum problem. Still need to divide the stones into two groups and try to have each group's weight as close to sum // 2 as possible.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Hard to think of solution.
+
+&nbsp;
+
+* Conclusion:
+
+
+1D array Solution:
+  {% highlight python %}
+    class Solution:
+        def lastStoneWeightII(self, stones: List[int]) -> int:
+            stonesSum = sum(stones)
+            dp = [0] * (stonesSum // 2 + 1)
+            for i in range(len(stones)):
+                for j in range(len(dp) - 1, stones[i] - 1, -1):
+                    dp[j] = max(dp[j], dp[j - stones[i]] + stones[i])
+            return stonesSum - dp[-1] * 2
+  {% endhighlight %}
+
+&nbsp;
+
+
+### Problem 2:
+
+[494. Target Sum](https://leetcode.com/problems/target-sum/)
+
+* First Thought:
+
+  1. NA
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Let left be the set of all positive numbers, right be the set of all to-be negative numbers. Then, left + right = sum, right = sum - left => left = (target + sum) / 2. If (target + sum) % 2 != 0, then there's no combination that can make the target.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Consider a corner case like: nums: [100], target = -200
+
+&nbsp;
+
+* Conclusion:
+
+
+1D array Solution:
+  {% highlight python %}
+    class Solution:
+        def findTargetSumWays(self, nums: List[int], target: int) -> int:
+            overall = sum(nums) + target
+            left = 0
+            if overall % 2 == 1 or overall < 0:
+                return 0
+            else:
+                left = overall // 2
+            dp = [0] * (left + 1)
+            dp[0] = 1
+            for i in range(len(nums)):
+                for j in range(len(dp) - 1, nums[i] - 1, -1):
+                    dp[j] += dp[j - nums[i]]
+            return dp[-1]
+  {% endhighlight %}
+
+&nbsp;
+
+### Problem 3:
+
+[474. Ones and Zeroes](https://leetcode.com/problems/ones-and-zeroes/)
+
+* First Thought:
+
+  1. NA
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. item weight is '0' * x + '1' * y. We need dp[i][j] two dimensions to record the size of the largest subset.
+  2. transition formula: dp[i][j] = max(dp[i][j], dp[i-x][j-y] + 1)
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Has 3 dimensions.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def findMaxForm(self, strs: List[str], m: int, n: int) -> int:
+            dp = [[0 for _ in range(n+1)] for _ in range(m+1)]
+            for s in strs:
+                x = s.count('0')
+                y = s.count('1')
+                for i in range(len(dp)-1, x-1, -1):
+                    for j in range(len(dp[0])-1, y-1, -1):
+                        dp[i][j] = max(dp[i][j], dp[i-x][j-y] + 1)
+            return dp[-1][-1]
+  {% endhighlight %}
+
+&nbsp;

@@ -193,3 +193,12 @@ permalink: /how_to/
 
 * python sort when there's a tie:
     people.sort(key=lambda x: (-x[0], x[1]))
+
+
+* python calculate 1's and 0's in a string. for example, '11100110'
+    {% highlight python%}
+    string = '11100110'
+    num_ones = string.count('1')
+    num_zeros = string.count('0')
+    {% endhighlight %}
+
