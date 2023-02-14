@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Algo Day 46"
-date:   2023-02-12 13:33:00 -0000
+date:   2023-02-10 13:33:00 -0000
 categories: [Algorithm,Dynamic Programming]
 ---
 

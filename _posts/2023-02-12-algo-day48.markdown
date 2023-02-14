@@ -1,0 +1,126 @@
+---
+layout: post
+title:  "Algo Day 48"
+date:   2023-02-12 20:38:00 -0000
+categories: [Algorithm,Dynamic Programming]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+### Complete Backpack Problem
+
+* Difference between 01 backpack and complete backpack is that items in complete backpack are allowed to be reused multiple times.
+* For 1D array solution, We just need to go through the second for loop from start to end instead of from end to start.
+
+### Problem 1:
+
+[518. Coin Change II](https://leetcode.com/problems/coin-change-ii/)
+
+* First Thought:
+
+  1. transition formula: dp[j] += dp[j-c]
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Loop from start to end
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+
+1D array Solution:
+  {% highlight python %}
+    class Solution:
+        def change(self, amount: int, coins: List[int]) -> int:
+            dp = [0] * (amount + 1)
+            dp[0] = 1
+            for c in coins:
+                for j in range(c, len(dp)):
+                    dp[j] += dp[j-c]
+            return dp[-1]
+  {% endhighlight %}
+
+&nbsp;
+
+
+### Problem 2:
+
+[377. Combination Sum IV](https://leetcode.com/problems/combination-sum-iv/)
+
+* First Thought:
+
+  1. Very similar to last question, but it's asking for permutation, which has order.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. If we are looking for combinations, we should put items in the outer loop and backpack in the inner loop.
+  2. If we are looking for permutations, we should put backpack in the outer loop and items in the inner loop.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+
+1D array Solution:
+  {% highlight python %}
+    class Solution:
+        def combinationSum4(self, nums: List[int], target: int) -> int:
+            dp = [0] * (target + 1)
+            dp[0] = 1
+            for j in range(len(dp)):
+                for n in nums:
+                    if j >= n:
+                        dp[j] += dp[j-n]
+            return dp[-1]
+  {% endhighlight %}
+
+&nbsp;
+
+>Follow up: What if negative numbers are allowed in the given array? How does it change the problem? What limitation we need to add to the question to allow negative numbers?
+
+Solution:
+{% highlight python %}
+  class Solution:
+      def combinationSum4(self, nums: List[int], target: int, max_len: int) -> int:
+          dp = [0] * (target + 1)
+          dp[0] = 1
+          for j in range(len(dp)):
+              for n in nums:
+                  if j - n >= 0 and j - n <= max_len:
+                      dp[j] += dp[j-n]
+          return dp[-1]
+{% endhighlight %}
