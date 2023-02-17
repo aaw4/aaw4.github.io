@@ -1,0 +1,151 @@
+---
+layout: post
+title:  "Algo Day 49"
+date:   2023-02-13 18:38:00 -0000
+categories: [Algorithm,Dynamic Programming]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Problem 1:
+
+[70. Climbing Stairs](https://leetcode.com/problems/climbing-stairs/description/)
+
+* First Thought:
+
+  1. complete backpack
+  2. permutation. Loop backpack first then item.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+
+1D array Solution:
+  {% highlight python %}
+    class Solution:
+        def climbStairs(self, n: int) -> int:
+            dp = [0] * (n+1)
+            dp[0] = 1
+            items = [1,2]
+            for i in range(n+1):
+                for j in items:
+                    if j <= i:
+                        dp[i] += dp[i-j]
+            return dp[-1]
+  {% endhighlight %}
+
+&nbsp;
+
+
+### Problem 2:
+
+[322. Coin Change](https://leetcode.com/problems/coin-change/)
+
+* First Thought:
+
+  1. trasition formula: min(dp[j], dp[j-coins[i]] + 1)
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. initialization: other than index 0, should be initialized to 2**31-1
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+
+1D array Solution:
+  {% highlight python %}
+    class Solution:
+        def coinChange(self, coins: List[int], amount: int) -> int:
+            dp = [2**31-1] * (amount + 1)
+            dp[0] = 0
+            for i in range(len(coins)):
+                for j in range(coins[i], amount + 1):
+                    dp[j] = min(dp[j], dp[j-coins[i]] + 1)
+            return -1 if dp[-1] == 2**31-1 else dp[-1]
+  {% endhighlight %}
+
+&nbsp;
+
+
+### Problem 3:
+
+[279. Perfect Squares](https://leetcode.com/problems/perfect-squares/)
+
+* First Thought:
+
+  1. Very similar to last question.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. initialization: other than index 0, should be initialized to 10**4+1
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+
+1D array Solution:
+  {% highlight python %}
+    class Solution:
+        def numSquares(self, n: int) -> int:
+            # largest perfect square numbers in this case is 100 as n <= 10**4 is the constraint.
+            dp = [10**4+1] * (n + 1)
+            dp[0] = 0
+            for i in range(100):
+                cur = (i+1)**2
+                if cur>n: break
+                for j in range(cur, n+1):
+                    dp[j] = min(dp[j], dp[j-cur] + 1)
+            return dp[-1]
+  {% endhighlight %}
+
+&nbsp;
