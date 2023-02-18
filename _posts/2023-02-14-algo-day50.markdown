@@ -1,0 +1,134 @@
+---
+layout: post
+title:  "Algo Day 50"
+date:   2023-02-14 23:22:00 -0000
+categories: [Algorithm,Dynamic Programming]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Problem 1:
+
+[139. Word Break](https://leetcode.com/problems/word-break/)
+
+* First Thought:
+
+  1. complete backpack
+  2. Backpack first, then item
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. True and False operation on a dp array.
+
+&nbsp;
+
+* Conclusion:
+
+
+1D array Solution:
+  {% highlight python %}
+    class Solution:
+        def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+            dp = [False] * (len(s) + 1)
+            dp[0] = True
+            for i in range(1, len(s) + 1):
+                for w in wordDict:
+                    if i >= len(w):
+                        dp[i] = dp[i] or (dp[i-len(w)] and w == s[i-len(w):i])
+            return dp[-1]
+  {% endhighlight %}
+
+&nbsp;
+
+
+### Multi backpack
+
+* very similar to 01 backpack. Just need to flatten the backpack so that each item could only be used once. Here's the C++ code:
+{% highlight C++ %}
+  void test_multi_pack() {
+      vector<int> weight = {1, 3, 4};
+      vector<int> value = {15, 20, 30};
+      vector<int> nums = {2, 3, 2};
+      int bagWeight = 10;
+      for (int i = 0; i < nums.size(); i++) {
+          while (nums[i] > 1) {
+              weight.push_back(weight[i]);
+              value.push_back(value[i]);
+              nums[i]--;
+          }
+      }
+
+      vector<int> dp(bagWeight + 1, 0);
+      for(int i = 0; i < weight.size(); i++) {
+          for(int j = bagWeight; j >= weight[i]; j--) {
+              dp[j] = max(dp[j], dp[j - weight[i]] + value[i]);
+          }
+          for (int j = 0; j <= bagWeight; j++) {
+              cout << dp[j] << " ";
+          }
+          cout << endl;
+      }
+      cout << dp[bagWeight] << endl;
+
+  }
+  int main() {
+      test_multi_pack();
+  }
+
+{% endhighlight %}
+
+* Another way of implementing multi backpack is to add another loop in the original two loops (from 01 backpack), which will be responsible for taking numbers of items into account. Here's the C++ code:
+{% highlight C++ %}
+  void test_multi_pack() {
+      vector<int> weight = {1, 3, 4};
+      vector<int> value = {15, 20, 30};
+      vector<int> nums = {2, 3, 2};
+      int bagWeight = 10;
+      vector<int> dp(bagWeight + 1, 0);
+
+
+      for(int i = 0; i < weight.size(); i++) {
+          for(int j = bagWeight; j >= weight[i]; j--) {
+              for (int k = 1; k <= nums[i] && (j - k * weight[i]) >= 0; k++) {
+                  dp[j] = max(dp[j], dp[j - k * weight[i]] + k * value[i]);
+              }
+          }
+          for (int j = 0; j <= bagWeight; j++) {
+              cout << dp[j] << " ";
+          }
+          cout << endl;
+      }
+      cout << dp[bagWeight] << endl;
+  }
+  int main() {
+      test_multi_pack();
+  }
+{% endhighlight %}
+
+&nbsp;
