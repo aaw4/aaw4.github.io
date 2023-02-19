@@ -1,0 +1,185 @@
+---
+layout: post
+title:  "Algo Day 51"
+date:   2023-02-15 13:47:00 -0000
+categories: [Algorithm,Dynamic Programming]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Problem 1:
+
+[198. House Robber](https://leetcode.com/problems/house-robber/)
+
+* First Thought:
+
+  1. Assume we will rob each house. Then our transition formula becomes dp[i] = max(dp[i-3]+nums[i], dp[i-2] + nums[i])
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We could consider the transition formula in a way that we may rob or not rob each house. Then the transition formula will become: dp[i] = max(dp[i-2]+nums[i], dp[i-1])
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def rob(self, nums: List[int]) -> int:
+            if len(nums) == 1: return nums[0]
+            elif len(nums) == 2: return max(nums[0], nums[1])
+            elif len(nums) == 3: return max(nums[0] + nums[2], nums[1])
+            dp = [0] * len(nums)
+            dp[0] = nums[0]
+            dp[1] = nums[1]
+            dp[2] = nums[0] + nums[2]
+            for i in range(3, len(nums)):
+                    dp[i] = max(dp[i-3]+nums[i], dp[i-2] + nums[i])
+            return max(dp[-2], dp[-1])
+  {% endhighlight %}
+
+Optimized Solution:
+{% highlight python %}
+    class Solution:
+        def rob(self, nums: List[int]) -> int:
+            if len(nums) == 1: return nums[0]
+            elif len(nums) == 2: return max(nums[0], nums[1])
+            dp = [0] * len(nums)
+            dp[0] = nums[0]
+            dp[1] = max(nums[0],nums[1])
+            for i in range(2, len(nums)):
+                    dp[i] = max(dp[i-2]+nums[i], dp[i-1])
+            return dp[-1]
+{% endhighlight %}
+
+&nbsp;
+
+
+### Problem 2:
+
+[213. House Robber II](https://leetcode.com/problems/house-robber-ii/)
+
+* First Thought:
+
+  1. Very simialar to last question.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. We just need to divide the circluar problem into two linear problem. For example, for a array [1,2,3,4,5], we can pass [1,2,3,4] and [2,3,4,5] into a normal house robber solution, then find the maximum among those two.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Circular.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def robbery(self, nums: List[int]) -> int:
+                if len(nums) == 1: return nums[0]
+                elif len(nums) == 2: return max(nums[0], nums[1])
+                dp = [0] * len(nums)
+                dp[0] = nums[0]
+                dp[1] = max(nums[0],nums[1])
+                for i in range(2, len(nums)):
+                        dp[i] = max(dp[i-2]+nums[i], dp[i-1])
+                return dp[-1]
+
+        def rob(self, nums: List[int]) -> int:
+            if len(nums) == 1: return nums[0]
+            return max(self.robbery(nums[:-1]), self.robbery(nums[1:]))
+  {% endhighlight %}
+
+
+&nbsp;
+
+
+### Problem 3:
+
+[337. House Robber III](https://leetcode.com/problems/house-robber-iii/)
+
+* First Thought:
+
+  1. Very simialar to last question, but in a tree structure.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+>TODO: We can use memorization recursion to solve the problem as well. Time complexity O(n), space complexity O(logn). 
+  1. tree dp. We will have a length 2 dp array at each recursion level. 
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. a length of 2 dp array as the return value of the tree recursion function.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    # Definition for a binary tree node.
+    # class TreeNode:
+    #     def __init__(self, val=0, left=None, right=None):
+    #         self.val = val
+    #         self.left = left
+    #         self.right = right
+    class Solution:
+        def rob(self, root: Optional[TreeNode]) -> int:
+            
+            def robTree(root):
+                if not root:
+                    return [0,0]
+                
+                leftdp = robTree(root.left)
+                rightdp = robTree(root.right)
+                steal = root.val + leftdp[0] + rightdp[0]
+                notSteal = max(leftdp) + max(rightdp)
+                return [notSteal, steal]
+            
+            return max(robTree(root))
+            
+  {% endhighlight %}
+
+
+&nbsp;
+
+
+
