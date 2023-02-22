@@ -1,0 +1,149 @@
+---
+layout: post
+title:  "Algo Day 53"
+date:   2023-02-17 19:12:00 -0000
+categories: [Algorithm,Dynamic Programming]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Problem 1:
+
+[123. Best Time to Buy and Sell Stock III](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/)
+
+* First Thought:
+
+  1. NA
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Five states. dp[i][0] not hold. dp[i][1] first time buy, dp[i][2] first time sell. dp[i][3] first time buy, dp[i][4] first time sell.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. How to seperate the problem into different states.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+      def maxProfit(self, prices: List[int]) -> int:
+          dp = [[0 for _ in range(5)] for _ in range(len(prices))]
+          dp[0][1] = -prices[0]
+          dp[0][3] = -prices[0]
+          for i in range(1, len(prices)):
+              dp[i][0] = dp[i-1][0]
+              dp[i][1] = max(dp[i-1][1], dp[i-1][0] - prices[i])
+              dp[i][2] = max(dp[i-1][2], dp[i-1][1] + prices[i])
+              dp[i][3] = max(dp[i-1][3], dp[i-1][2] - prices[i])
+              dp[i][4] = max(dp[i-1][4], dp[i-1][3] + prices[i])
+          return dp[-1][4]
+  {% endhighlight %}
+
+>TODO:
+Optimized Solution:
+{% highlight python %}
+  class Solution:
+      def maxProfit(self, prices: List[int]) -> int:
+          if len(prices) == 0:
+              return 0
+          dp = [0] * 5 
+          dp[1] = -prices[0]
+          dp[3] = -prices[0]
+          for i in range(1, len(prices)):
+              dp[1] = max(dp[1], dp[0] - prices[i])
+              dp[2] = max(dp[2], dp[1] + prices[i])
+              dp[3] = max(dp[3], dp[2] - prices[i])
+              dp[4] = max(dp[4], dp[3] + prices[i])
+          return dp[4]
+{% endhighlight %}
+
+
+&nbsp;
+
+
+### Problem 2:
+
+[188. Best Time to Buy and Sell Stock IV](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/)
+
+* First Thought:
+
+  1. Very similar to last question.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def maxProfit(self, k: int, prices: List[int]) -> int:
+            dp = [[0 for _ in range(1 + k * 2)] for _ in range(len(prices))]
+            for i in range(1, 1 + k * 2, 2):
+                dp[0][i] = -prices[0]
+            for i in range(1, len(dp)):
+                dp[i][0] = dp[i-1][0]
+                for j in range(1, len(dp[0])):
+                    if j % 2 == 1:
+                        dp[i][j] = max(dp[i-1][j], dp[i-1][j-1] - prices[i])
+                    else:
+                        dp[i][j] = max(dp[i-1][j], dp[i-1][j-1] + prices[i])
+            return dp[-1][-1]
+  {% endhighlight %}
+
+>TODO:
+Optimized Solution:
+{% highlight python %}
+  class Solution:
+      def maxProfit(self, k: int, prices: List[int]) -> int:
+          if len(prices) == 0: return 0
+          dp = [0] * (2*k + 1)
+          for i in range(1,2*k,2):
+              dp[i] = -prices[0]
+          for i in range(1,len(prices)):
+              for j in range(1,2*k + 1):
+                  if j % 2:
+                      dp[j] = max(dp[j],dp[j-1]-prices[i])
+                  else:
+                      dp[j] = max(dp[j],dp[j-1]+prices[i])
+          return dp[2*k]
+{% endhighlight %}
+
+&nbsp;
