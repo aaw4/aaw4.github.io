@@ -1,0 +1,166 @@
+---
+layout: post
+title:  "Algo Day 56"
+date:   2023-08-20 21:34:00 -0000
+categories: [Algorithm,Dynamic Programming]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Problem 1:
+
+[300. Longest Increasing Subsequence](https://leetcode.com/problems/longest-increasing-subsequence/)
+
+* First Thought:
+
+  1. nums[j] and nums[i] represent the tail of two such increasing subsequences
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+      def lengthOfLIS(self, nums: List[int]) -> int:
+          res = 1
+          dp = [1] * len(nums)
+          for i in range(1, len(nums)):
+              for j in range(i):
+                  if nums[i] > nums[j]:
+                      dp[i] = max(dp[i], dp[j] + 1)
+              res = max(res, dp[i])
+          return res
+  {% endhighlight %}
+
+
+&nbsp;
+
+
+### Problem 2:
+
+[674. Longest Continuous Increasing Subsequence](https://leetcode.com/problems/longest-continuous-increasing-subsequence/)
+
+* First Thought:
+
+  1. Compared to last question, it's continuous.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def findLengthOfLCIS(self, nums: List[int]) -> int:
+            res = 1
+            dp = [1] * len(nums)
+            for i in range(1, len(nums)):
+                if nums[i] > nums[i-1]:
+                    dp[i] = dp[i-1] + 1
+                res = max(res, dp[i])
+            return res
+  {% endhighlight %}
+
+
+&nbsp;
+
+
+### Problem 3:
+
+[718. Maximum Length of Repeated Subarray](https://leetcode.com/problems/maximum-length-of-repeated-subarray/)
+
+* First Thought:
+
+  1. 2d array.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. 1d is possible if second loop is going backwards.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+2D Solution:
+  {% highlight python %}
+    class Solution:
+      def findLength(self, nums1: List[int], nums2: List[int]) -> int:
+          res = 0
+          dp = [[0] * (len(nums2) + 1) for _ in range(len(nums1) + 1)]
+          for i in range(1, len(nums1) + 1):
+              for j in range(1, len(nums2) + 1):
+                  if nums1[i-1] == nums2[j-1]:
+                      dp[i][j] = dp[i-1][j-1] + 1
+                  res = max(res, dp[i][j])
+          return res
+  {% endhighlight %}
+
+
+1D Solution:
+  {% highlight python %}
+    class Solution:
+      def findLength(self, nums1: List[int], nums2: List[int]) -> int:
+          res = 0
+          dp = [0] * (len(nums2) + 1)
+          for i in range(1, len(nums1) + 1):
+              for j in range(len(nums2), 0, -1):
+                  if nums1[i-1] == nums2[j-1]:
+                      dp[j] = dp[j-1] + 1
+                  else:
+                      dp[j] = 0
+                  res = max(res, dp[j])
+          return res
+  {% endhighlight %}
+
+&nbsp;
