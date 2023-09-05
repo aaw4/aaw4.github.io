@@ -1,0 +1,169 @@
+---
+layout: post
+title:  "Algo Day 57"
+date:   2023-09-04 17:20:00 -0000
+categories: [Algorithm,Dynamic Programming]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Problem 1:
+
+[1143. Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/)
+
+* First Thought:
+
+  1. NA
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+2D Solution:
+  {% highlight python %}
+    class Solution:
+      def longestCommonSubsequence(self, text1: str, text2: str) -> int:
+          dp = [[0] * (len(text1) + 1) for _ in range(len(text2) + 1)]
+          for i in range(1, len(dp)):
+              for j in range(1, len(dp[0])):
+                  if text1[j-1] == text2[i-1]:
+                      dp[i][j] = max(dp[i][j-1], dp[i-1][j-1] + 1)
+                  else:
+                      dp[i][j] = max(dp[i][j-1], dp[i-1][j])
+          return dp[-1][-1]
+  {% endhighlight %}
+
+1D Solution:
+  {% highlight python %}
+    class Solution:
+      def longestCommonSubsequence(self, text1: str, text2: str) -> int:
+          dp = [0] * (len(text1) + 1)
+          for i in range(1, len(text2) + 1):
+              prevMax = 0
+              for j in range(1, len(text1) + 1):
+                  curMax = dp[j]
+                  if text1[j-1] == text2[i-1]:
+                      dp[j] = prevMax + 1
+                  else:
+                      dp[j] = max(dp[j-1], curMax)
+                  prevMax = curMax
+        return dp[-1]
+  {% endhighlight %}
+
+
+&nbsp;
+
+
+### Problem 2:
+
+[1035. Uncrossed Lines](https://leetcode.com/problems/uncrossed-lines/)
+
+* First Thought:
+
+  1. Same as problem 1143.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def maxUncrossedLines(self, nums1: List[int], nums2: List[int]) -> int:
+            dp = [0] * (len(nums1) + 1)
+            for i in range(1, len(nums2) + 1):
+                prevMax = 0
+                for j in range(1, len(nums1) + 1):
+                    curMax = dp[j]
+                    if nums1[j-1] == nums2[i-1]:
+                        dp[j] = prevMax + 1
+                    else:
+                        dp[j] = max(dp[j-1], curMax)
+                    prevMax = curMax
+            return dp[-1]
+  {% endhighlight %}
+
+
+&nbsp;
+
+
+### Problem 3:
+
+[53. Maximum Subarray](https://leetcode.com/problems/maximum-subarray/)
+
+* First Thought:
+
+  1. NA
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+      def maxSubArray(self, nums: List[int]) -> int:
+          res = nums[0]
+          dp = [0] * (len(nums))
+          dp[0] = nums[0]
+          for i in range(1, len(dp)):
+              dp[i] = max(dp[i-1] + nums[i], nums[i])
+              res = max(res, dp[i])
+          return res
+  {% endhighlight %}
+
+&nbsp;
