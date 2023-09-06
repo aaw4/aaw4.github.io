@@ -1,0 +1,111 @@
+---
+layout: post
+title:  "Algo Day 58"
+date:   2023-09-05 16:40:00 -0000
+categories: [Algorithm,Dynamic Programming]
+---
+
+<div class="post-categories">
+  Categories:
+  {% if post %}
+    {% assign categories = post.categories %}
+  {% else %}
+    {% assign categories = page.categories %}
+  {% endif %}
+  {% for category in categories %}
+    {% if categories[-1] == category %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% else %}
+        <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}},</a>
+    {% endif %}
+  {% unless forloop.last %}&nbsp;{% endunless %}
+  {% endfor %}
+</div>
+
+&nbsp;
+
+
+### Problem 1:
+
+[392. Is Subsequence](https://leetcode.com/problems/is-subsequence/)
+
+* First Thought:
+
+  1. NA
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. NA.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. NA.
+
+&nbsp;
+
+* Conclusion:
+
+2D Solution:
+  {% highlight python %}
+    class Solution:
+      def isSubsequence(self, s: str, t: str) -> bool:
+          dp = [[0] * (len(s) + 1) for _ in range(len(t) + 1)]
+          for i in range(1, len(t) + 1):
+              for j in range(1, len(s) + 1):
+                  if s[j-1] == t[i-1]:
+                      dp[i][j] = dp[i-1][j-1] + 1
+                  else:
+                      dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+          return dp[-1][-1] == len(s)
+  {% endhighlight %}
+
+
+&nbsp;
+
+
+### Problem 2:
+
+[115. Distinct Subsequences](https://leetcode.com/problems/distinct-subsequences/)
+
+* First Thought:
+
+  1. NA.
+
+&nbsp;
+
+* Thoughts After Looking At The Solution:
+
+  1. Very hard to understand.
+
+&nbsp;
+
+* Difficulties Encountered:
+
+  1. Transition function is hard to figure out.
+
+&nbsp;
+
+* Conclusion:
+
+Solution:
+  {% highlight python %}
+    class Solution:
+        def numDistinct(self, s: str, t: str):
+            dp = [[0] * (len(t) + 1) for _ in range(len(s) + 1)]
+            for j in range(len(t) + 1): dp[0][j] = 0
+            for i in range(len(s) + 1): dp[i][0] = 1
+            for i in range(1, len(dp)):
+                for j in range(1, len(dp[0])):
+                    if s[i-1] == t[j-1]:
+                        dp[i][j] = dp[i-1][j-1] + dp[i-1][j]
+                    else:
+                        dp[i][j] = dp[i-1][j]
+            return dp[-1][-1] % 1000000007
+  {% endhighlight %}
+
+
+&nbsp;
